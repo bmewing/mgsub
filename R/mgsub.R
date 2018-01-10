@@ -7,7 +7,9 @@
 #' @examples
 #' mgsub("hey, ho",list("hey"="ho","ho"="hey"))
 #' mgsub("developer",list("e" ="p", "p" = "e"))
-#' mgsub("The chemical Dopaziamine is fake",list("dopa(.*?) "="mega\\1 ","fake"="real"),ignore.case=T)
+#' mgsub("The chemical Dopaziamine is fake",
+#'       list("dopa(.*?) "="mega\\1 ","fake"="real"),
+#'       ignore.case=TRUE)
 #' @export
 
 mgsub = function(string,conversions=list(),...){

@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Mark Ewing
 Maintainer: Mark Ewing <mewing@eastman.com>
 Description: Designed to enable simultaneous substitution in strings in a safe fashion.
-    Safe means it does not rely on placeholders (which can cause errors in same length matches)
+    Safe means it does not rely on placeholders (which can cause errors in same length matches).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
