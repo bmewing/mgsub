@@ -23,9 +23,11 @@ mgsub = function(string,conversions=list(),...){
       string = ''
     } else {
       m[m<0] = Inf
-      fr = which.min(m)
+      fr = which(m==min(m))
+      nc = unlist(lapply(matches,attr,"match.length"))[fr]
+      fr = fr[which.max(nc)]
+      nc = nc[which.max(nc)]
       fp = unlist(lapply(matches,`[[`,1))[fr]
-      nc = attr(matches[[fr]],"match.length")
       if(fp > 1){
         newString = paste0(newString,substr(string,1,fp-1))
       }

@@ -30,3 +30,7 @@ test_that("Options passed to sub family work",{
   expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",list("dopa"="meta","fake"="real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
   expect_equal(mgsub("Where are the \\bspaces\\b - not the spaces I want?",list("\\bspaces\\b"="boxes","[Ww]here"="There"),fixed=TRUE),"Where are the boxes - not the spaces I want?")
 })
+
+test_that("Priority is based on matched length",{
+  expect_equal(mgsub("Dopazamine is a fake chemical",list("do.*ne"="metazamine","dopazamin"="freakout"),ignore.case=TRUE),"metazamine is a fake chemical")
+})

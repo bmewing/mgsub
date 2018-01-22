@@ -1,0 +1,149 @@
+---
+title: "Safe Substitution"
+author: "Mark Ewing"
+date: "2018-01-22"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## String Substitutions
+
+Modifying existing strings via substitution is a common practice in programing. To this end, functions like `gsub` provide a method to accomplish this.  Below is an example where "hey" is replaced with "ho" transforming a line from the Ramones into Santa Claus leaving on Christmas Eve.
+
+```{r}
+s = "hey ho, let's go!"
+gsub("hey","ho",s)
+```
+
+## Simultaneous Substitions
+
+`gsub` only supports one string of matching with one string of replacement. What this means is while you can match on multiple conditions, you can only provide one condition of replacement. Below we construct a regular expression which matches on "hey" or "ho" and replaces any such matches with "yo".
+
+```{r}
+s = "hey ho, let's go!"
+gsub("hey|ho","yo",s)
+```
+
+If you wanted to replace "hey" with "get" and "ho" with "ready" you would need two steps.
+
+```{r}
+s = "hey ho, let's go!"
+s_new = gsub("hey","get",s)
+s_new = gsub("ho","ready",s_new)
+s_new
+```
+
+This sequential process however can result in undesired changes.  If we want to swap where "hey" and "ho" are, we can see the process breaks down.  Because each change happens in order, "hey" becomes "ho" and then every "ho" becomes "hey", undoing the first step.
+
+```{r}
+s = "hey ho, let's go!"
+s_new = gsub("hey","ho",s)
+s_new = gsub("ho","hey",s_new)
+s_new
+```
+
+## mgsub
+
+This is where the idea of `mgsub` comes in.  `mgsub` is a safe, simultaneous string substitution function.  We pass in a named list (or named vector) of changes to make along with the string and the replacements are simultaneous.  The names are the matching criteria and the values are the replacements.
+
+```{r}
+library(mgsub)
+s = "hey ho, let's go!"
+mgsub::mgsub(s,list("hey"="ho","ho"="hey"))
+```
+
+Below you can see an example of using named vector. where the matches and replacements start out as independent vectors.
+
+```{r}
+s = "hey ho, let's go!"
+replacements = c("ho","hey")
+matches = c("hey","ho")
+names(replacements) = matches
+mgsub::mgsub(s,replacements)
+```
+
+Below you can see an example of using a named vector where the names are defined inline.
+
+```{r}
+s = "hey ho, let's go!"
+mgsub::mgsub(s,c("hey"="ho","ho"="hey"))
+```
+
+### Regular Expression Support
+
+`mgsub` fully supports regular expressions as matching criteria as well as backreferences in the replacement.  Note how the matching criteria ignores "dopachloride" for replacement but matches both "Dopazamine" and "dopastriamine" (all fake chemicals despite what the replace string claims!).
+
+```{r}
+s = "Dopazamine is not the same as dopachloride or dopastriamine, yet is still fake."
+mgsub::mgsub(s,list("[Dd]opa([^ ]*?mine)"="Meta\\1","fake"="real"))
+```
+
+Furthermore, you can pass through any options from the `gsub` family.  In the example below you can see fixed string matching
+
+```{r}
+s = "All my life I chased $money$ and .power. - not love!"
+mgsub::mgsub(s,list("$money$"="balloons",".power."="dolphins","love"="success"),fixed=TRUE)
+```
+
+### Safe Substitution
+
+This is actually the most compelling feature of `mgsub`.  The package `qdap` implements a similar type function (also named `mgsub`) which does not employ safe substitution.  Here safe means a few things:
+
+1. Longer matches are preferred over shorter matches for substitution first
+2. No placeholders are used so accidental string collisions don't occur
+
+First, a demonstration of the first form of safety.  Note how we are searching for 'they' and 'the' where 'the' is a substring of 'they'.  If 'the' is matched before 'they', we would expect to see "ay don't understand the value of what they seek.", but in both cases, the replacements occur correctly.
+
+```{r}
+s="they don't understand the value of what they seek."
+mgsub::mgsub(s,list("the"="a","they"="we"))
+```
+
+```{r}
+qdap::mgsub(c("the","they"),c("a","we"),s)
+```
+
+We can continue to test this by using variable length regular expression matches. Note that we provide two different matching criteria, one a regular expression of length 6 but which matches a length 10 and the other a match of length 9.  However, `qdap` only prioritizes based on the length of the regular expression, not on the actual length of the match.  While this is an edge case, it an example of safety provided by `mgsub`.
+
+```{r}
+s="Dopazamine is a fake chemical"
+mgsub::mgsub(s,list("dopazamin"="freakout","do.*ne"="metazamine"),ignore.case=TRUE)
+```
+
+```{r}
+qdap::mgsub(c("dopazamin","do.*ne"),c("freakout","metazamine"),s,fixed = FALSE,ignore.case=TRUE)
+```
+
+In the second case, `mgsub` does not utilize placeholders and therefore guarantees no string collisions when replacing.  Consider a simple example of shifting each word in the following string one spot to the left.  `mgsub` correctly shifts each word while `qdap` provides two wrong sets of substitutions depending on the other arguments you provide.
+
+```{r}
+s="hey, how are you?"
+mgsub::mgsub(s,list("hey"="how","how"="are","are"="you","you"="hey"))
+```
+
+```{r}
+print(qdap::mgsub(c("hey","how","are","you"),c("how","are","you","hey"),s))
+print(qdap::mgsub(c("hey","how","are","you"),c("how","are","you","hey"),s
+            ,fixed=FALSE,ignore.case=TRUE))
+```
+
+## Performance
+
+`mgsub` pays the price of safety in performance, potentially running slower than `qdap`.
+
+```{r}
+library(microbenchmark)
+
+s = "Dopazamine is not the same as Dopachloride and is still fake."
+m = c("[Dd]opa(.*?mine)","fake")
+r = c("Meta\\1","real")
+names(r) = m
+
+microbenchmark(
+  mgsub = mgsub::mgsub(s,r),
+  qdap = qdap::mgsub(m,r,s,fixed=FALSE)
+)
+```
