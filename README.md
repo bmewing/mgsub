@@ -2,7 +2,7 @@
 
 ***A safe, multiple, simultaneous string substitution function***
 
-[![Build Status](https://travis-ci.org/bmewing/mgsub.svg?branch=master)](https://travis-ci.org/bmewing/mgsub) [![Coverage Status](https://img.shields.io/codecov/c/github/bmewing/mgsub/master.svg)](https://codecov.io/github/bmewing/mgsub?branch=master)
+[![Build Status](https://travis-ci.org/bmewing/mgsub.svg?branch=master)](https://travis-ci.org/bmewing/mgsub) [![Coverage Status](https://img.shields.io/codecov/c/github/bmewing/mgsub/master.svg)](https://codecov.io/github/bmewing/mgsub?branch=master) [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/mgsub)](https://CRAN.R-project.org/package=mgsub) ![](http://cranlogs.r-pkg.org/badges/mgsub)
 
 ## Why do I want this?
 You have a string you want to make substitutions on. You want to make many different substitutions at the same time and you want them done in a safe way.
