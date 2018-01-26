@@ -13,6 +13,7 @@
 #' @export
 
 mgsub = function(string,conversions=list(),...){
+  if(is.null(names(conversions))) stop("The object provided in conversions must be named")
   newString = ""
   conversions = conversions[order(nchar(names(conversions)),decreasing = T)]
   while(nchar(string) > 0){
