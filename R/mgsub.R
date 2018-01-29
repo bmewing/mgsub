@@ -1,8 +1,13 @@
-#' Takes a list of conversions and applies it simultaneously to a string
+#' Safe, multiple gsub
+#' 
+#' \code{mgsub} - A safe, simultaneous, multiple global string replacement that 
+#' takes a vector of replacement strings, named with their matching search terms
+#' and applies them to a single string to be modified.
 #'
 #' @param string a character vector where replacements are sought
 #' @param conversions named list of conversions to apply
-#' @param ... arguments to pass to gregexpr/sub
+#' @param \dots arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}
+#' @rdname mgsub
 #' @return Converted string.
 #' @examples
 #' mgsub("hey, ho",list("hey"="ho","ho"="hey"))
@@ -13,7 +18,7 @@
 #' @export
 
 mgsub = function(string,conversions=list(),...){
-  if(is.null(names(conversions))) stop("The object provided in conversions must be named")
+  if(is.null(names(conversions))) stop("The object provided for `conversions` must be named")
   newString = ""
   conversions = conversions[order(nchar(names(conversions)),decreasing = T)]
   while(nchar(string) > 0){
@@ -37,4 +42,32 @@ mgsub = function(string,conversions=list(),...){
     }
   }
   return(newString)
+}
+
+
+#' Safe, multiple gsub
+#' 
+#' \code{mgsub_alt} - Alternate call to \code{mgsub} that 
+#' takes a vector of search terms, a vector of replacements and applies them to a 
+#' single string to be modified.
+#' 
+#' @param pattern Character string to be matched in the given character vector
+#' @param replacement Character string equal in length to pattern or of length one which are 
+#' a replacement for matched pattern.
+#' @param recycle logical. should replacement be recylced if lengths differ?
+#' 
+#' @rdname mgsub
+#' @export
+
+mgsub_alt = function(pattern,replacement,string,recycle=FALSE,...){
+  if(!recycle & length(pattern) != length(replacement)) stop("pattern and replacement vectors must be the same length")
+  if(length(replacement) > length(pattern)){
+    warning("You provided more replacements than search strings - some will be dropped")
+    replacement = replacement[seq_along(pattern)]
+  }
+  if(recycle & length(pattern) != length(replacement)){
+    replacement = rep(replacement,ceiling(length(pattern) / length(replacement)))[seq_along(pattern)]
+  } 
+  names(replacement) = pattern
+  return(mgsub(string=string, conversions=replacement,...))
 }

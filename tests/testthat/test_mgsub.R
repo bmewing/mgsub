@@ -34,3 +34,15 @@ test_that("Options passed to sub family work",{
 test_that("Priority is based on matched length",{
   expect_equal(mgsub("Dopazamine is a fake chemical",list("do.*ne"="metazamine","dopazamin"="freakout"),ignore.case=TRUE),"metazamine is a fake chemical")
 })
+
+test_that("Function fails when non-named object is passed",{
+  expect_error(mgsub("hey ho",list("hey","ho")))
+  expect_error(mgsub("hey ho",c("hey","ho")))
+})
+
+test_that("mgsub_alt works",{
+  expect_error(mgsub_alt(c("hey","ho"),"yo","hey, ho"))
+  expect_warning(mgsub_alt(c("hey"),c("ho","hey"),"hey, ho",recycle = TRUE))
+  expect_equal(mgsub_alt(c("hey","ho"),"yo","hey, ho",recycle = TRUE),"yo, yo")
+  expect_equal(mgsub_alt(c("hey","ho"),c("ho","hey"),"hey, ho"),"ho, hey")
+})

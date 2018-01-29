@@ -2,22 +2,38 @@
 % Please edit documentation in R/mgsub.R
 \name{mgsub}
 \alias{mgsub}
-\title{Takes a list of conversions and applies it simultaneously to a string}
+\alias{mgsub_alt}
+\title{Safe, multiple gsub}
 \usage{
 mgsub(string, conversions = list(), ...)
+
+mgsub_alt(pattern, replacement, string, recycle = FALSE, ...)
 }
 \arguments{
 \item{string}{a character vector where replacements are sought}
 
 \item{conversions}{named list of conversions to apply}
 
-\item{...}{arguments to pass to gregexpr/sub}
+\item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}}
+
+\item{pattern}{Character string to be matched in the given character vector}
+
+\item{replacement}{Character string equal in length to pattern or of length one which are 
+a replacement for matched pattern.}
+
+\item{recycle}{logical. should replacement be recylced if lengths differ?}
 }
 \value{
 Converted string.
 }
 \description{
-Takes a list of conversions and applies it simultaneously to a string
+\code{mgsub} - A safe, simultaneous, multiple global string replacement that 
+takes a vector of replacement strings, named with their matching search terms
+and applies them to a single string to be modified.
+
+\code{mgsub_alt} - A safe, simultaneous, multiple global string replacement that 
+takes a vector of search terms, a vector of replacements and applies them to a 
+single string to be modified.
 }
 \examples{
 mgsub("hey, ho",list("hey"="ho","ho"="hey"))
