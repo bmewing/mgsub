@@ -40,9 +40,9 @@ test_that("Function fails when non-named object is passed",{
   expect_error(mgsub("hey ho",c("hey","ho")))
 })
 
-test_that("mgsub_alt works",{
-  expect_error(mgsub_alt(c("hey","ho"),"yo","hey, ho"))
-  expect_warning(mgsub_alt(c("hey"),c("ho","hey"),"hey, ho",recycle = TRUE))
-  expect_equal(mgsub_alt(c("hey","ho"),"yo","hey, ho",recycle = TRUE),"yo, yo")
-  expect_equal(mgsub_alt(c("hey","ho"),c("ho","hey"),"hey, ho"),"ho, hey")
+test_that("mgsub_vm works",{
+  expect_error(mgsub_vm("hey, ho",c("hey","ho"),"yo"))
+  expect_warning(mgsub_vm("hey, ho",c("hey"),c("ho","hey"),recycle = TRUE))
+  expect_equal(mgsub_vm("hey, ho",c("hey","ho"),"yo",recycle = TRUE),"yo, yo")
+  expect_equal(mgsub_vm("hey, ho",c("hey","ho"),c("ho","hey")),"ho, hey")
 })
