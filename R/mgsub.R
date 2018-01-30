@@ -22,7 +22,7 @@
 
 mgsub = function(string,...){
   arg = eval(substitute(alist(...)))
-  assign("tmp0",arg,envir=globalenv())
+  arg = lapply(arg,eval)
   arg$string = string
   narg = names(arg)
   if(is.null(narg)){
