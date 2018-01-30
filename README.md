@@ -22,28 +22,42 @@ There are currently two supported method for specifying the patterns to match an
 
 ### Dictionary method
 
-`r mgsub::mgsub(string,conversions=list(),...)`
+```r
+mgsub::mgsub(string,conversions=list(),...)
+```
 
 Conversions are supplied using a named list.  The name is the matching pattern, the value is the replacement.
 
-`r mgsub::mgsub("hey, how are you?",list("hey"="how","how"="are","are"="you","you"="hey"))`
+```r
+mgsub::mgsub("hey, how are you?",list("hey"="how","how"="are","are"="you","you"="hey"))
+```
 
 Matches and replacements can be supplied as regex expressions.  Additional arguments can be passed to the `sub`/`gsub`/`gregexpr` family of internal functions.
 
-`r mgsub::mgsub("Dopazamine is not the same as Dopachloride and is still fake.", list("[Dd]opa(.*?mine)"="Meta\\1","fake"="real"),ignore.case=F)`
+```r
+mgsub::mgsub("Dopazamine is not the same as Dopachloride and is still fake.", list("[Dd]opa(.*?mine)"="Meta\\1","fake"="real"),ignore.case=F)
+```
 
 ### Vector method
 
-`r mgsub::mgsub(string,pattern=c(),replacement=c(),recycle=FALSE,...)`
+```r
+mgsub::mgsub(string,pattern=c(),replacement=c(),recycle=FALSE,...)
+```
 
 The pattern to match is supplied first and the replacement vector follows.
 
-`r mgsub::mgsub("hey, how are you?",c("hey","how","are","you"),c("how","are","you","hey"))`
+```r
+mgsub::mgsub("hey, how are you?",c("hey","how","are","you"),c("how","are","you","hey"))
+```
 
 Recycling is to make it easy to provide a single replacement (or a pattern of replacements) for multiple matches.
 
-`r mgsub::mgsub("hey, ho, let's go!",c("hey","ho","go"),"ugh",recycle=TRUE)`
+```r
+mgsub::mgsub("hey, ho, let's go!",c("hey","ho","go"),"ugh",recycle=TRUE)
+```
 
 Matches and replacements can still be supplied as regex exressions. Additional arguments can be passed to the `sub`/`gsub`/`gregexpr` family of internal functions.
 
-`r mgsub::mgsub("Dopazamine is not the same as Dopachloride and is still fake.", c("[Dd]opa(.*?mine)","fake"), c("Meta\\1","real"),ignore.case=F)`
+```r
+mgsub::mgsub("Dopazamine is not the same as Dopachloride and is still fake.", c("[Dd]opa(.*?mine)","fake"), c("Meta\\1","real"),ignore.case=F)
+```
