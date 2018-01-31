@@ -25,13 +25,6 @@ mgsub = function(string,...){
   arg = lapply(arg,eval)
   arg$string = string
   narg = names(arg)
-  if(is.null(narg)){
-    if(length(arg) == 2){
-      return(mgsub_dict(string,arg[[1]]))
-    } else {
-      return(do.call(mgsub_vm,arg))
-    }
-  }
   if("conversions" %in% narg){
     if(any(c("pattern","replacement") %in% narg)) warning("You have made an ambiguous call to mgsub, defaulting to the dictionary method")
     arg[narg %in% c("","pattern","replacement","recycle")] = NULL
@@ -96,6 +89,7 @@ mgsub_dict = function(string,conversions=list(),...){
 #' @export
 
 mgsub_vm = function(string,pattern,replacement,recycle=FALSE,...){
+  if(!is.logical(recycle)) stop("You did not provide a boolean value to recycle. Try naming each input according to the method (dictionary or vector) you want to use.")
   if(!recycle & length(pattern) != length(replacement)) stop("pattern and replacement vectors must be the same length")
   if(length(replacement) > length(pattern)){
     warning("You provided more replacements than search strings - some will be dropped")

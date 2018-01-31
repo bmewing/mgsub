@@ -16,6 +16,9 @@ test_that("non-named mgsub and named sub works",{
   expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",c("dopa","fake"),c("meta","real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
   expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",list("dopa"="meta","fake"="real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
   expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",c("dopa"="meta","fake"="real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
+  expect_error(mgsub("Hey, ho",ignore.case=TRUE,c("hey"),c("tomorrow"),list("today")))
+  expect_equal(mgsub("Hey, ho",ignore.case=TRUE,c("hey"),c("tomorrow"),list("hey"="today")),"today, ho")
+  expect_equal(mgsub("Hey, ho",ignore.case=TRUE,c("hey"),c("tomorrow")),"tomorrow, ho")
 })
 
 test_that("partially named mgsub inputs works",{
@@ -25,8 +28,8 @@ test_that("partially named mgsub inputs works",{
 })
 
 test_that("multiple named arguments warns and defaults to dict",{
-  expect_warning(mgsub(pattern=c("dopa","fake"),replacement=c("beta","super fake"),conversions=list("dopa"="meta","fake"="real"),string="Dopazamine and dopaloramide are fake chemicals.",ignore.case=TRUE))
-  expect_equal(mgsub(pattern=c("dopa","fake"),replacement=c("beta","super fake"),conversions=list("dopa"="meta","fake"="real"),string="Dopazamine and dopaloramide are fake chemicals.",ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
+  expect_warning(tmp <- mgsub(pattern=c("dopa","fake"),replacement=c("beta","super fake"),conversions=list("dopa"="meta","fake"="real"),string="Dopazamine and dopaloramide are fake chemicals.",ignore.case=TRUE))
+  expect_true(identical(tmp,"metazamine and metaloramide are real chemicals."))
 })
 
 context("Vector mode")
