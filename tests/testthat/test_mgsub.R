@@ -14,14 +14,19 @@ test_that("non-named inputs correctly route",{
 
 test_that("non-named mgsub and named sub works",{
   expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",c("dopa","fake"),c("meta","real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
-  expect_equal(mgsub_dict("Dopazamine and dopaloramide are fake chemicals.",list("dopa"="meta","fake"="real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
-  expect_equal(mgsub_dict("Dopazamine and dopaloramide are fake chemicals.",c("dopa"="meta","fake"="real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
+  expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",list("dopa"="meta","fake"="real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
+  expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",c("dopa"="meta","fake"="real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
 })
 
 test_that("partially named mgsub inputs works",{
   expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",pattern=c("dopa","fake"),c("meta","real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
   expect_equal(mgsub("Dopazamine and dopaloramide are fake chemicals.",c("meta","real"),pattern=c("dopa","fake"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
-  expect_equal(mgsub_dict(list("dopa"="meta","fake"="real"),string="Dopazamine and dopaloramide are fake chemicals.",ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
+  expect_equal(mgsub(list("dopa"="meta","fake"="real"),string="Dopazamine and dopaloramide are fake chemicals.",ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
+})
+
+test_that("multiple named arguments warns and defaults to dict",{
+  expect_warning(mgsub(pattern=c("dopa","fake"),replacement=c("beta","super fake"),conversions=list("dopa"="meta","fake"="real"),string="Dopazamine and dopaloramide are fake chemicals.",ignore.case=TRUE))
+  expect_equal(mgsub(pattern=c("dopa","fake"),replacement=c("beta","super fake"),conversions=list("dopa"="meta","fake"="real"),string="Dopazamine and dopaloramide are fake chemicals.",ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
 })
 
 context("Vector mode")
