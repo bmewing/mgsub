@@ -2,19 +2,22 @@
 % Please edit documentation in R/mgsub.R
 \name{mgsub}
 \alias{mgsub}
-\alias{mgsub_alt}
+\alias{mgsub_dict}
+\alias{mgsub_vm}
 \title{Safe, multiple gsub}
 \usage{
-mgsub(string, conversions = list(), ...)
+mgsub(string, ...)
 
-mgsub_alt(pattern, replacement, string, recycle = FALSE, ...)
+mgsub_dict(string, conversions = list(), ...)
+
+mgsub_vm(string, pattern, replacement, recycle = FALSE, ...)
 }
 \arguments{
 \item{string}{a character vector where replacements are sought}
 
-\item{conversions}{named list of conversions to apply}
-
 \item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}}
+
+\item{conversions}{named list of conversions to apply}
 
 \item{pattern}{Character string to be matched in the given character vector}
 
@@ -27,11 +30,14 @@ a replacement for matched pattern.}
 Converted string.
 }
 \description{
-\code{mgsub} - A safe, simultaneous, multiple global string replacement that 
+\code{mgsub} - A safe, simultaneous, multiple global string replacement wrapper that 
+allows access to multiple methods of specifying matches and replacements.
+
+\code{mgsub_dict} - Dictionary version of \code{mgsub} that 
 takes a vector of replacement strings, named with their matching search terms
 and applies them to a single string to be modified.
 
-\code{mgsub_alt} - A safe, simultaneous, multiple global string replacement that 
+\code{mgsub_vm} - Vectorized mode call to \code{mgsub} that 
 takes a vector of search terms, a vector of replacements and applies them to a 
 single string to be modified.
 }
