@@ -28,19 +28,20 @@ mgsub = function(string,...){
   if("conversions" %in% narg){
     if(any(c("pattern","replacement") %in% narg)) warning("You have made an ambiguous call to mgsub, defaulting to the dictionary method")
     arg[narg %in% c("","pattern","replacement","recycle")] = NULL
-    return(do.call(mgsub_dict,arg))
+    f = "mgsub_dict"
   } else if("pattern" %in% narg & "replacement" %in% narg){
     arg[narg %in% c("","conversions")] = NULL
-    return(do.call(mgsub_vm,arg))
+    f = "mgsub_vm"
   } else {
     namedInputs = unlist(lapply(arg,function(n){!is.null(names(n))}))
     if(any(namedInputs[narg == ""])){
       arg[!namedInputs & narg %in% c("","recylce")] = NULL
-      return(do.call(mgsub_dict,arg))
+      f = "mgsub_dict"
     } else {
-      return(do.call(mgsub_vm,arg))
+      f = "mgsub_vm"
     }
   }
+  return(do.call(f,arg))
 }
 
 #' Safe, multiple gsub
@@ -54,29 +55,7 @@ mgsub = function(string,...){
 
 mgsub_dict = function(string,conversions=list(),...){
   if(is.null(names(conversions))) stop("The object provided for `conversions` must be named")
-  newString = ""
-  conversions = conversions[order(nchar(names(conversions)),decreasing = T)]
-  while(nchar(string) > 0){
-    matches = lapply(names(conversions),regexpr,text=string,...)
-    m = unlist(lapply(matches,`[[`,1))
-    if(all(m < 0)){
-      newString = paste0(newString,string)
-      string = ''
-    } else {
-      m[m<0] = Inf
-      fr = which(m==min(m))
-      nc = unlist(lapply(matches,attr,"match.length"))[fr]
-      fr = fr[which.max(nc)]
-      nc = nc[which.max(nc)]
-      fp = unlist(lapply(matches,`[[`,1))[fr]
-      if(fp > 1){
-        newString = paste0(newString,substr(string,1,fp-1))
-      }
-      newString = paste0(newString,sub(names(conversions)[fr],conversions[[fr]],substr(string,fp,fp+nc-1),...))
-      string = substr(string,fp+nc,nchar(string))
-    }
-  }
-  return(newString)
+  return(unlist(worker(string,names(conversions),unlist(conversions),...)))
 }
 
 #' Safe, multiple gsub
@@ -99,5 +78,32 @@ mgsub_vm = function(string,pattern,replacement,recycle=FALSE,...){
     replacement = rep(replacement,ceiling(length(pattern) / length(replacement)))[seq_along(pattern)]
   } 
   names(replacement) = pattern
-  return(mgsub_dict(string=string, conversions=replacement,...))
+  return(unlist(worker(string, pattern, replacement,...)))
+}
+
+worker = function(string,p,r,...){
+  lapply(string,function(s){
+    newString = ""
+    while(nchar(s) > 0){
+      matches = lapply(p,regexpr,text=s,...)
+      m = unlist(lapply(matches,`[[`,1))
+      if(all(m < 0)){
+        newString = paste0(newString,s)
+        s = ''
+      } else {
+        m[m<0] = Inf
+        fr = which(m==min(m))
+        nc = unlist(lapply(matches,attr,"match.length"))[fr]
+        fr = fr[which.max(nc)]
+        nc = nc[which.max(nc)]
+        fp = unlist(lapply(matches,`[[`,1))[fr]
+        if(fp > 1){
+          newString = paste0(newString,substr(s,1,fp-1))
+        }
+        newString = paste0(newString,sub(p[fr],r[fr],substr(s,fp,fp+nc-1),...))
+        s = substr(s,fp+nc,nchar(s))
+      }
+    }
+    return(newString)
+  })
 }
