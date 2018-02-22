@@ -38,7 +38,7 @@ takes a vector of replacement strings, named with their matching search terms
 and applies them to a single string to be modified.
 
 \code{mgsub_vm} - Vectorized mode call to \code{mgsub} that 
-takes a vector of search terms, a vector of replacements and applies them to a 
+takes a vector of search terms, a vector of replacements and applies them to a
 single string to be modified.
 }
 \examples{

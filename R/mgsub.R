@@ -61,7 +61,7 @@ mgsub_dict = function(string,conversions=list(),...){
 #' Safe, multiple gsub
 #' 
 #' \code{mgsub_vm} - Vectorized mode call to \code{mgsub} that 
-#' takes a vector of search terms, a vector of replacements and applies them to a 
+#' takes a vector of search terms, a vector of replacements and applies them to a
 #' single string to be modified.
 #' 
 #' @rdname mgsub
@@ -82,28 +82,45 @@ mgsub_vm = function(string,pattern,replacement,recycle=FALSE,...){
 }
 
 worker = function(string,p,r,...){
-  lapply(string,function(s){
-    newString = ""
-    while(nchar(s) > 0){
-      matches = lapply(p,regexpr,text=s,...)
-      m = unlist(lapply(matches,`[[`,1))
-      if(all(m < 0)){
-        newString = paste0(newString,s)
-        s = ''
-      } else {
-        m[m<0] = Inf
-        fr = which(m==min(m))
-        nc = unlist(lapply(matches,attr,"match.length"))[fr]
-        fr = fr[which.max(nc)]
-        nc = nc[which.max(nc)]
-        fp = unlist(lapply(matches,`[[`,1))[fr]
-        if(fp > 1){
-          newString = paste0(newString,substr(s,1,fp-1))
-        }
-        newString = paste0(newString,sub(p[fr],r[fr],substr(s,fp,fp+nc-1),...))
-        s = substr(s,fp+nc,nchar(s))
+  if(length(string)==1){
+    return(w2(string,p,r,...))
+  }
+  if(any(grepl("\\$|\\^",p))){
+    return(lapply(string,w2,p=p,r=r,...))
+  }
+  div = c("\001", "\002", "\003", "\004", "\005", "\006", "\a", "\b", 
+                 "\t", "\n", "\v", "\f", "\r", "\016", "\017", "\020", "\021", 
+                 "\022", "\023", "\024", "\025", "\026", "\027", "\030", "\031", 
+                 "\032", "\033", "\034", "\035", "\036", "\037", "\177")
+  while(any(grepl(div[1],string))){
+    div = div[-1]
+  }
+  s = paste(string,collapse = div[1])
+  p = gsub("([^\\])\\.",paste0("\\1[^",div[1],"]"),p)
+  return(strsplit(w2(s,p,r,...),div,fixed=T))
+}
+
+w2 = function(s,p,r,...){
+  newString = ""
+  while(nchar(s) > 0){
+    matches = lapply(p,regexpr,text=s,...)
+    m = unlist(lapply(matches,`[[`,1))
+    if(all(m < 0)){
+      newString = paste0(newString,s)
+      s = ''
+    } else {
+      m[m<0] = Inf
+      fr = which(m==min(m))
+      nc = unlist(lapply(matches,attr,"match.length"))[fr]
+      fr = fr[which.max(nc)]
+      nc = nc[which.max(nc)]
+      fp = unlist(lapply(matches,`[[`,1))[fr]
+      if(fp > 1){
+        newString = paste0(newString,substr(s,1,fp-1))
       }
+      newString = paste0(newString,sub(p[fr],r[fr],substr(s,fp,fp+nc-1),...))
+      s = substr(s,fp+nc,nchar(s))
     }
-    return(newString)
-  })
+  }
+  return(newString)
 }

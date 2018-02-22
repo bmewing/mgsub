@@ -35,6 +35,10 @@ test_that("multiple named arguments warns and defaults to dict",{
 
 test_that("multiple input strings are processed",{
   expect_equal(mgsub(c("string","test"),c("t"="p")),c("spring","pesp"))
+  expect_equal(mgsub(c("Dopazamine is not the same as Dopachloride and is still fake.","dopazamine is undergoing a review by the fake news arm of the Dopazamine government"),
+                     c("[Dd]opa(.*?mine)","fake"),c("Meta\\1","real")),
+                     c("Metazamine is not the same as Dopachloride and is still real.", 
+                       "Metazamine is undergoing a review by the real news arm of the Metazamine government"))
 })
 
 #Vector mode -----
