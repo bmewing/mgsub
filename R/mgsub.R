@@ -57,20 +57,6 @@ mgsub_dict = function(string,conversions=list(),...){
   return(unlist(worker(string,names(conversions),unlist(conversions),...)))
 }
 
-mgsub_vm = function(string,pattern,replacement,recycle=FALSE,...){
-  if(!is.logical(recycle)) stop("You did not provide a boolean value to recycle. Try naming each input according to the method (dictionary or vector) you want to use.")
-  if(!recycle & length(pattern) != length(replacement)) stop("pattern and replacement vectors must be the same length")
-  if(length(replacement) > length(pattern)){
-    warning("You provided more replacements than search strings - some will be dropped")
-    replacement = replacement[seq_along(pattern)]
-  }
-  if(recycle & length(pattern) != length(replacement)){
-    replacement = rep(replacement,ceiling(length(pattern) / length(replacement)))[seq_along(pattern)]
-  } 
-  names(replacement) = pattern
-  return(unlist(worker(string, pattern, replacement,...)))
-}
-
 worker = function(string,p,r,...){
   if(length(string)==1){
     return(w2(string,p,r,...))

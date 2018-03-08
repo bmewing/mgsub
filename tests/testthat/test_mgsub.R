@@ -1,7 +1,7 @@
 #mgsub--------
 context("NSE wrapper")
 
-test_that("named inputs correctly route",{
+test_that("basic functionality",{
   expect_equal(mgsub("hey, ho",pattern=c("hey","ho"),replacement=c("ho","hey")),"ho, hey")
 })
 
@@ -32,6 +32,23 @@ test_that("NAs are correctly handled",{
   expect_equal(mgsub(c("string",NA,"test"),c("t"),c("p")),c("spring",NA,"pesp"))
 })
 
+test_that("recylce has to be a boolean",{
+  expect_error(mgsub("hey, ho",c("hey"),c("ho","hey"),recycle = "yes"))
+  expect_error(mgsub("hey, ho",c("hey"),c("ho","hey"),recycle = 1))
+})
+
+test_that("non-recycled non-equal length match and replace input fails",{
+  expect_error(mgsub("hey, ho",c("hey","ho"),c("yo")))
+  expect_error(mgsub("hey, ho",c("hey"),c("ho","yo")))
+})
+
+test_that("recycled longer replace than match warns and truncates",{
+  expect_warning(mgsub("hey, ho",c("hey"),c("ho","hey"),recycle = TRUE))
+})
+
+test_that("recycled replacements works",{
+  expect_equal(mgsub("hey, ho",c("hey","ho"),"yo",recycle = TRUE),"yo, yo")
+})
 
 #Dictionary mode ------
 context("Dictionary mode")
@@ -112,6 +129,15 @@ test_that("Options passed to sub family work",{
 
 test_that("Priority is based on matched length",{
   expect_equal(unlist(worker("Dopazamine is a fake chemical",c("do.*ne","dopazamin"),c("metazamine","freakout"),ignore.case=TRUE)),"metazamine is a fake chemical")
+})
+
+test_that("works even with start/end symbols",{
+  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("^hi"),c("bye")),c("bye there","who said hi to me?","who said hi"))
+  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("hi$"),c("bye")),c("hi there","who said hi to me?","who said bye"))
+})
+
+test_that("faster method works in presence of special characters",{
+  expect_equal(mgsub(c("what is \001 doing?","what about \002?"),c("what"),c("how")),c("how is \001 doing?","how about \002?"))
 })
 
 #Backwards compatibility------
