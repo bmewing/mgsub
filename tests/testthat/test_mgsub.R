@@ -1,4 +1,4 @@
-#NSE Wrapper--------
+#mgsub--------
 context("NSE wrapper")
 
 test_that("named inputs correctly route",{
@@ -7,6 +7,7 @@ test_that("named inputs correctly route",{
 
 test_that("dictionary input throws warning",{
   expect_warning(mgsub("hey, ho",list("hey"="ho","ho"="hey")))
+  expect_warning(mgsub("hey, ho",conversions = list("hey"="ho","ho"="hey")))
 })
 
 test_that("non-named mgsub and named sub works",{

@@ -8,6 +8,7 @@
 #' @param replacement Character string equal in length to pattern or of length one which are 
 #' a replacement for matched pattern.
 #' @param recycle logical. should replacement be recylced if lengths differ?
+#' @param conversions DEPRECATED - will be removed in a later release
 #' @param \dots arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}
 #' @rdname mgsub
 #' @return Converted string.
@@ -19,11 +20,12 @@
 #'       ignore.case=TRUE)
 #' @export
 
-mgsub = function(string,pattern,replacement,recycle=FALSE,...){
+mgsub = function(string,pattern,replacement,recycle=FALSE,conversions=list(),...){
   sna = !is.na(string)
-  if(missing(replacement) & !is.null(pattern)){
+  if((missing(replacement) & !missing(pattern)) | (missing(replacement) & missing(pattern) & length(conversions) > 0)){
     warning("Calling mgsub with a named list is deprecated. You may continue to call mgsub_dict.")
-    result = mgsub_dict(string[sna],pattern,...)
+    passthrough = if(missing(pattern)) conversions else pattern
+    result = mgsub_dict(string[sna],passthrough,...)
   } else {
     if(!is.logical(recycle)) stop("Recycle must be a boolean")
     if(!recycle & length(pattern) != length(replacement)) stop("pattern and replacement vectors must be the same length")

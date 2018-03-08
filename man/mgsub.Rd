@@ -5,7 +5,8 @@
 \alias{mgsub_dict}
 \title{Safe, multiple gsub}
 \usage{
-mgsub(string, pattern, replacement, recycle = FALSE, ...)
+mgsub(string, pattern, replacement, recycle = FALSE, conversions = list(),
+  ...)
 
 mgsub_dict(string, conversions = list(), ...)
 }
@@ -18,6 +19,8 @@ mgsub_dict(string, conversions = list(), ...)
 a replacement for matched pattern.}
 
 \item{recycle}{logical. should replacement be recylced if lengths differ?}
+
+\item{conversions}{DEPRECATED - will be removed in a later release}
 
 \item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}}
 }
