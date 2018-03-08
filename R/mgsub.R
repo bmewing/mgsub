@@ -7,7 +7,7 @@
 #' @param pattern Character string to be matched in the given character vector
 #' @param replacement Character string equal in length to pattern or of length one which are 
 #' a replacement for matched pattern.
-#' @param recycle logical. should replacement be recylced if lengths differ?
+#' @param recycle logical. should replacement be recycled if lengths differ?
 #' @param conversions DEPRECATED - will be removed in a later release
 #' @param \dots arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}
 #' @rdname mgsub
