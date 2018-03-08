@@ -137,10 +137,15 @@ print(qdap::mgsub(c("hey","how","are","you"),c("how","are","you","hey"),s
 ```{r}
 library(microbenchmark)
 
-s = c("Dopazamine is not the same as Dopachloride and is still fake.","dopazamine is undergoing a review by the fake news arm of the Dopazamine government")
+s = c("Dopazamine is not the same as Dopachloride and is still fake.","dopazamine is undergoing a review by the fake news arm of the Dopazamine government","Where will I find dopazamine in time for the fake dopachloride party?","Is there still time to buy a fake car?")
 m = c("[Dd]opa(.*?mine)","fake")
 r = c("Meta\\1","real")
 names(r) = m
+
+microbenchmark(
+  mgsub = mgsub::mgsub(s[1],r),
+  qdap = qdap::mgsub(m,r,s[1],fixed=FALSE)
+)
 
 microbenchmark(
   mgsub = mgsub::mgsub(s,r),

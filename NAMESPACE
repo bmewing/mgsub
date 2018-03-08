@@ -2,4 +2,3 @@
 
 export(mgsub)
 export(mgsub_dict)
-export(mgsub_vm)

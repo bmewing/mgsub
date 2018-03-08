@@ -4,7 +4,6 @@
 #' allows access to multiple methods of specifying matches and replacements.
 #'
 #' @param string a character vector where replacements are sought
-#' @param conversions named list of conversions to apply
 #' @param pattern Character string to be matched in the given character vector
 #' @param replacement Character string equal in length to pattern or of length one which are 
 #' a replacement for matched pattern.
@@ -20,28 +19,26 @@
 #'       ignore.case=TRUE)
 #' @export
 
-mgsub = function(string,...){
-  arg = eval(substitute(alist(...)))
-  arg = lapply(arg,eval)
-  arg$string = string
-  narg = names(arg)
-  if("conversions" %in% narg){
-    if(any(c("pattern","replacement") %in% narg)) warning("You have made an ambiguous call to mgsub, defaulting to the dictionary method")
-    arg[narg %in% c("","pattern","replacement","recycle")] = NULL
-    f = "mgsub_dict"
-  } else if("pattern" %in% narg & "replacement" %in% narg){
-    arg[narg %in% c("","conversions")] = NULL
-    f = "mgsub_vm"
+mgsub = function(string,pattern,replacement,recycle=FALSE,...){
+  sna = !is.na(string)
+  if(missing(replacement) & !is.null(pattern)){
+    warning("Calling mgsub with a named list is deprecated. You may continue to call mgsub_dict.")
+    result = mgsub_dict(string[sna],pattern,...)
   } else {
-    namedInputs = unlist(lapply(arg,function(n){!is.null(names(n))}))
-    if(any(namedInputs[narg == ""])){
-      arg[!namedInputs & narg %in% c("","recylce")] = NULL
-      f = "mgsub_dict"
-    } else {
-      f = "mgsub_vm"
+    if(!is.logical(recycle)) stop("Recycle must be a boolean")
+    if(!recycle & length(pattern) != length(replacement)) stop("pattern and replacement vectors must be the same length")
+    if(length(replacement) > length(pattern)){
+      warning("You provided more replacements than search strings - some will be dropped")
+      replacement = replacement[seq_along(pattern)]
     }
+    if(recycle & length(pattern) != length(replacement)){
+      replacement = rep(replacement,ceiling(length(pattern) / length(replacement)))[seq_along(pattern)]
+    } 
+    names(replacement) = pattern
+    result = unlist(worker(string[sna], pattern, replacement,...))
   }
-  return(do.call(f,arg))
+  string[sna] = result
+  return(string)
 }
 
 #' Safe, multiple gsub
@@ -57,15 +54,6 @@ mgsub_dict = function(string,conversions=list(),...){
   if(is.null(names(conversions))) stop("The object provided for `conversions` must be named")
   return(unlist(worker(string,names(conversions),unlist(conversions),...)))
 }
-
-#' Safe, multiple gsub
-#' 
-#' \code{mgsub_vm} - Vectorized mode call to \code{mgsub} that 
-#' takes a vector of search terms, a vector of replacements and applies them to a
-#' single string to be modified.
-#' 
-#' @rdname mgsub
-#' @export
 
 mgsub_vm = function(string,pattern,replacement,recycle=FALSE,...){
   if(!is.logical(recycle)) stop("You did not provide a boolean value to recycle. Try naming each input according to the method (dictionary or vector) you want to use.")
