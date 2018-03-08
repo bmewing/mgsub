@@ -18,7 +18,7 @@ mgsub_dict(string, conversions = list(), ...)
 \item{replacement}{Character string equal in length to pattern or of length one which are 
 a replacement for matched pattern.}
 
-\item{recycle}{logical. should replacement be recylced if lengths differ?}
+\item{recycle}{logical. should replacement be recycled if lengths differ?}
 
 \item{conversions}{DEPRECATED - will be removed in a later release}
 
