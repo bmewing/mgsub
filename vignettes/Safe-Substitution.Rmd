@@ -47,29 +47,12 @@ s_new
 
 ## mgsub
 
-This is where the idea of `mgsub` comes in.  `mgsub` is a safe, simultaneous string substitution function.  We pass in a named list (or named vector) of changes to make along with the string and the replacements are simultaneous.  The names are the matching criteria and the values are the replacements.
+This is where the idea of `mgsub` comes in.  `mgsub` is a safe, simultaneous string substitution function.  We pass in a patterns to match as well as replacements and the replacements are applied simultaneously.
 
 ```{r}
 library(mgsub)
 s = "hey ho, let's go!"
-mgsub::mgsub(s,list("hey"="ho","ho"="hey"))
-```
-
-Below you can see an example of using named vector. where the matches and replacements start out as independent vectors.
-
-```{r}
-s = "hey ho, let's go!"
-replacements = c("ho","hey")
-matches = c("hey","ho")
-names(replacements) = matches
-mgsub::mgsub(s,replacements)
-```
-
-Below you can see an example of using a named vector where the names are defined inline.
-
-```{r}
-s = "hey ho, let's go!"
-mgsub::mgsub(s,c("hey"="ho","ho"="hey"))
+mgsub::mgsub(string = s,pattern = c("hey","ho"),replacement = c("ho","hey"))
 ```
 
 ### Regular Expression Support
@@ -78,19 +61,23 @@ mgsub::mgsub(s,c("hey"="ho","ho"="hey"))
 
 ```{r}
 s = "Dopazamine is not the same as dopachloride or dopastriamine, yet is still fake."
-mgsub::mgsub(s,list("[Dd]opa([^ ]*?mine)"="Meta\\1","fake"="real"))
+pattern = c("[Dd]opa([^ ]*?mine)","fake")
+replacement = c("Meta\\1","real")
+mgsub::mgsub(s,pattern,replacement)
 ```
 
 Furthermore, you can pass through any options from the `gsub` family.  In the example below you can see fixed string matching
 
 ```{r}
 s = "All my life I chased $money$ and .power. - not love!"
-mgsub::mgsub(s,list("$money$"="balloons",".power."="dolphins","love"="success"),fixed=TRUE)
+pattern = c("$money$",".power.","love")
+replacement = c("balloons","dolphins","success")
+mgsub::mgsub(s,pattern,replacement,fixed=TRUE)
 ```
 
 ### Safe Substitution
 
-This is actually the most compelling feature of `mgsub`.  The package `qdap` implements a similar type function (also named `mgsub`) which does not employ safe substitution.  Here safe means a few things:
+This is actually the most compelling feature of `mgsub`.  Several packages implement a similar type function (also named `mgsub`) which do not employ safe substitution - `qdap`, `bazar` and `textclean`.  A detailed analysis of safety can be found on [my blog](https://thug-r.life/post/2018-01-26-mgsub-launched/). Here is a quick overview of what is meant by safety:
 
 1. Longer matches are preferred over shorter matches for substitution first
 2. No placeholders are used so accidental string collisions don't occur
@@ -98,52 +85,62 @@ This is actually the most compelling feature of `mgsub`.  The package `qdap` imp
 First, a demonstration of the first form of safety.  Note how we are searching for 'they' and 'the' where 'the' is a substring of 'they'.  If 'the' is matched before 'they', we would expect to see "ay don't understand the value of what they seek.", but in both cases, the replacements occur correctly.
 
 ```{r}
-s="they don't understand the value of what they seek."
-mgsub::mgsub(s,list("the"="a","they"="we"))
+s = "they don't understand the value of what they seek."
+pattern = c("the","they")
+replacement = c("a","we")
+mgsub::mgsub(s,pattern,replacement)
 ```
 
 ```{r}
-qdap::mgsub(c("the","they"),c("a","we"),s)
+qdap::mgsub(pattern,replacement,s)
 ```
 
 We can continue to test this by using variable length regular expression matches. Note that we provide two different matching criteria, one a regular expression of length 6 but which matches a length 10 and the other a match of length 9.  However, `qdap` only prioritizes based on the length of the regular expression, not on the actual length of the match.  While this is an edge case, it an example of safety provided by `mgsub`.
 
 ```{r}
-s="Dopazamine is a fake chemical"
-mgsub::mgsub(s,list("dopazamin"="freakout","do.*ne"="metazamine"),ignore.case=TRUE)
+s = "Dopazamine is a fake chemical"
+pattern = c("dopazamin","do.*ne")
+replacement = c("freakout","metazamine")
+mgsub::mgsub(s,pattern,replacement,ignore.case=TRUE)
 ```
 
 ```{r}
-qdap::mgsub(c("dopazamin","do.*ne"),c("freakout","metazamine"),s,fixed = FALSE,ignore.case=TRUE)
+qdap::mgsub(pattern,replacement,s,fixed = FALSE,ignore.case=TRUE)
 ```
 
 In the second case, `mgsub` does not utilize placeholders and therefore guarantees no string collisions when replacing.  Consider a simple example of shifting each word in the following string one spot to the left.  `mgsub` correctly shifts each word while `qdap` provides two wrong sets of substitutions depending on the other arguments you provide.
 
 ```{r}
-s="hey, how are you?"
-mgsub::mgsub(s,list("hey"="how","how"="are","are"="you","you"="hey"))
+s = "hey, how are you?"
+pattern = c("hey","how","are","you")
+replacement = c("how","are","you","hey")
+mgsub::mgsub(s,pattern,replacement)
 ```
 
 ```{r}
-print(qdap::mgsub(c("hey","how","are","you"),c("how","are","you","hey"),s))
-print(qdap::mgsub(c("hey","how","are","you"),c("how","are","you","hey"),s
-            ,fixed=FALSE,ignore.case=TRUE))
+print(qdap::mgsub(pattern,replacement,s))
+print(qdap::mgsub(pattern,replacement,s,fixed=FALSE,ignore.case=TRUE))
 ```
 
 ## Performance
 
-`mgsub` pays the price of safety in performance, potentially running slower than `qdap`.
+`mgsub` pays the price of safety in performance. When only a single string is passed in to be modified, it runs about as fast as `qdap`. However, when multiple strings are passed in, `qdap` is far more elastic than `mgsub`.
 
 ```{r}
 library(microbenchmark)
 
-s = "Dopazamine is not the same as Dopachloride and is still fake."
-m = c("[Dd]opa(.*?mine)","fake")
-r = c("Meta\\1","real")
-names(r) = m
+s = c("Dopazamine is not the same as Dopachloride and is still fake.",
+      "dopazamine is undergoing a review by the fake news arm of the Dopazamine government")
+pattern = c("[Dd]opa(.*?mine)","fake")
+replacement = c("Meta\\1","real")
 
 microbenchmark(
-  mgsub = mgsub::mgsub(s,r),
-  qdap = qdap::mgsub(m,r,s,fixed=FALSE)
+  mgsub = mgsub::mgsub(s[1],pattern,replacement),
+  qdap = qdap::mgsub(pattern,replacement,s[1],fixed=FALSE)
+)
+
+microbenchmark(
+  mgsub = mgsub::mgsub(s,pattern,replacement),
+  qdap = qdap::mgsub(pattern,replacement,s,fixed=FALSE)
 )
 ```

@@ -3,28 +3,26 @@
 \name{mgsub}
 \alias{mgsub}
 \alias{mgsub_dict}
-\alias{mgsub_vm}
 \title{Safe, multiple gsub}
 \usage{
-mgsub(string, ...)
+mgsub(string, pattern, replacement, recycle = FALSE, conversions = list(),
+  ...)
 
 mgsub_dict(string, conversions = list(), ...)
-
-mgsub_vm(string, pattern, replacement, recycle = FALSE, ...)
 }
 \arguments{
 \item{string}{a character vector where replacements are sought}
-
-\item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}}
-
-\item{conversions}{named list of conversions to apply}
 
 \item{pattern}{Character string to be matched in the given character vector}
 
 \item{replacement}{Character string equal in length to pattern or of length one which are 
 a replacement for matched pattern.}
 
-\item{recycle}{logical. should replacement be recylced if lengths differ?}
+\item{recycle}{logical. should replacement be recycled if lengths differ?}
+
+\item{conversions}{DEPRECATED - will be removed in a later release}
+
+\item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}}
 }
 \value{
 Converted string.
@@ -36,10 +34,6 @@ allows access to multiple methods of specifying matches and replacements.
 \code{mgsub_dict} - Dictionary version of \code{mgsub} that 
 takes a vector of replacement strings, named with their matching search terms
 and applies them to a single string to be modified.
-
-\code{mgsub_vm} - Vectorized mode call to \code{mgsub} that 
-takes a vector of search terms, a vector of replacements and applies them to a 
-single string to be modified.
 }
 \examples{
 mgsub("hey, ho",list("hey"="ho","ho"="hey"))
