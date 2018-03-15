@@ -56,8 +56,6 @@ worker = function(string,pattern,replacement,...){
     } else {
       return(singleSafeReplace(x,pattern,string,replacement,...))
     }
-  } else {
-    return(fastReplace(string,pattern,replacement))
   }
   for(i in nrow(x):1){
     s = x[i,2]

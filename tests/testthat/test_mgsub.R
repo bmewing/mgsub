@@ -100,3 +100,7 @@ test_that("all missing patterns works",{
 test_that("some missing patterns work",{
   expect_equal(worker("hi there",c("hi","bye"),c("bye","hi")),"bye there")
 })
+
+test_that("two patterns, only overlap, fast exit",{
+  expect_equal(worker("the the the",c("the","th"),c("a","b")),"a a a")
+})
