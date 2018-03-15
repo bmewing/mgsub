@@ -50,7 +50,7 @@ worker = function(string,pattern,replacement,...){
     x = x0[order(x0[,3],decreasing = T),]
     x = filterOverlap(x)
     uid = unique(x[,1])
-    if(length(uid) == 1) return(fastReplace(string,pattern[uid],replacement[uid]))
+    if(length(uid) == 1) return(fastReplace(string,pattern[uid],replacement[uid],...))
     if(!is.null(dim(x))){
       x = x[order(x[,2]),]
     } else {
@@ -110,5 +110,5 @@ filterOverlap = function(x){
       next
     }
   }
-  return(x)
+  return(matrix(x,ncol=4))
 }
