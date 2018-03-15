@@ -49,7 +49,7 @@ worker = function(string,pattern,replacement,...){
   if(nrow(x0) > 1){
     x = x0[order(x0[,3],decreasing = T),]
     x = filterOverlap(x)
-    uid = unique(x0[,1])
+    uid = unique(x[,1])
     if(length(uid) == 1) return(fastReplace(string,pattern[uid],replacement[uid]))
     if(!is.null(dim(x))){
       x = x[order(x[,2]),]
