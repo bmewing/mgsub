@@ -8,6 +8,7 @@ Description: Designed to enable simultaneous substitution in strings in a safe f
     Safe means it does not rely on placeholders (which can cause errors in same length matches).
 License: MIT + file LICENSE
 Encoding: UTF-8
+ByteCompile: true
 LazyData: true
 RoxygenNote: 6.0.1
 Suggests: covr,

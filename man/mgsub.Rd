@@ -26,9 +26,10 @@ Converted string.
 allows access to multiple methods of specifying matches and replacements.
 }
 \examples{
-mgsub("hey, ho",list("hey"="ho","ho"="hey"))
-mgsub("developer",list("e" ="p", "p" = "e"))
+mgsub("hey, ho",pattern=c("hey","ho"),replacement=c("ho","hey"))
+mgsub("developer",pattern=c("e","p"),replacement=c("p","e"))
 mgsub("The chemical Dopaziamine is fake",
-      list("dopa(.*?) "="mega\\\\1 ","fake"="real"),
+      pattern=c("dopa(.*?) ","fake"),
+      replacement=c("mega\\\\1 ","real"),
       ignore.case=TRUE)
 }

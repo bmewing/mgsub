@@ -45,6 +45,16 @@ test_that("recycled replacements works",{
   expect_equal(mgsub("hey, ho",c("hey","ho"),"yo",recycle = TRUE),"yo, yo")
 })
 
+test_that("works even with start/end symbols",{
+  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("^hi"),c("bye")),c("bye there","who said hi to me?","who said hi"))
+  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("hi$"),c("bye")),c("hi there","who said hi to me?","who said bye"))
+})
+
+test_that("all NA fails quickly",{
+  expect_equal(mgsub(rep(NA,4),"A","b"),rep(NA,4))
+  expect_equal(mgsub(NA,"A","b"),NA)
+})
+
 #Worker --------
 context("Worker")
 
@@ -83,7 +93,10 @@ test_that("Priority is based on matched length",{
   expect_equal(worker("Dopazamine is a fake chemical",c("do.*ne","dopazamin"),c("metazamine","freakout"),ignore.case=TRUE),"metazamine is a fake chemical")
 })
 
-test_that("works even with start/end symbols",{
-  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("^hi"),c("bye")),c("bye there","who said hi to me?","who said hi"))
-  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("hi$"),c("bye")),c("hi there","who said hi to me?","who said bye"))
+test_that("all missing patterns works",{
+  expect_equal(worker("hi there",c("why","not","go"),c("a","b","c")),"hi there")
+})
+
+test_that("some missing patterns work",{
+  expect_equal(worker("hi there",c("hi","bye"),c("bye","hi")),"bye there")
 })
