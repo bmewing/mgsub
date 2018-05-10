@@ -3,6 +3,7 @@ context("Primary Call")
 
 test_that("basic functionality",{
   expect_equal(mgsub("hey, ho",pattern=c("hey","ho"),replacement=c("ho","hey")),"ho, hey")
+  expect_equal(mgsub("Production Workers, All Other",c("s$","s([[:punct:] ])",",? All Other$"),c("","\\1","")),"Production Workers")
 })
 
 test_that("non-named mgsub and named sub works",{

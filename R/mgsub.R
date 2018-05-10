@@ -32,7 +32,6 @@ mgsub = function(string,pattern,replacement,recycle=FALSE,...){
   if(recycle & length(pattern) != length(replacement)){
     replacement = rep(replacement,ceiling(length(pattern) / length(replacement)))[seq_along(pattern)]
   } 
-  #names(replacement) = pattern
   result = vapply(string[sna],worker,c(""),USE.NAMES = FALSE,pattern=pattern,replacement=replacement,...)
   string[sna] = result
   return(string)
@@ -41,11 +40,10 @@ mgsub = function(string,pattern,replacement,recycle=FALSE,...){
 worker = function(string,pattern,replacement,...){
   x0 = do.call(rbind,lapply(seq_along(pattern),getMatches,string=string,pattern=pattern,...))
   keep = unique(x0[,1][x0[,2] != -1])
-  pattern = pattern[keep]
-  replacement = replacement[keep]
   x0 = matrix(x0[x0[,2] != -1,],ncol=4)
+  uid = unique(x0[,1])
   if(nrow(x0)==0) return(string)
-  if(length(unique(x0[,1])) == 1) return(fastReplace(string,pattern,replacement,...))
+  if(length(unique(x0[,1])) == 1) return(fastReplace(string,pattern[uid],replacement[uid],...))
   if(nrow(x0) > 1){
     x = x0[order(x0[,3],decreasing = T),]
     x = filterOverlap(x)
