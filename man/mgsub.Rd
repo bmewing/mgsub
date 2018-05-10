@@ -2,13 +2,9 @@
 % Please edit documentation in R/mgsub.R
 \name{mgsub}
 \alias{mgsub}
-\alias{mgsub_dict}
 \title{Safe, multiple gsub}
 \usage{
-mgsub(string, pattern, replacement, recycle = FALSE, conversions = list(),
-  ...)
-
-mgsub_dict(string, conversions = list(), ...)
+mgsub(string, pattern, replacement, recycle = FALSE, ...)
 }
 \arguments{
 \item{string}{a character vector where replacements are sought}
@@ -20,8 +16,6 @@ a replacement for matched pattern.}
 
 \item{recycle}{logical. should replacement be recycled if lengths differ?}
 
-\item{conversions}{DEPRECATED - will be removed in a later release}
-
 \item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}}
 }
 \value{
@@ -30,15 +24,12 @@ Converted string.
 \description{
 \code{mgsub} - A safe, simultaneous, multiple global string replacement wrapper that 
 allows access to multiple methods of specifying matches and replacements.
-
-\code{mgsub_dict} - Dictionary version of \code{mgsub} that 
-takes a vector of replacement strings, named with their matching search terms
-and applies them to a single string to be modified.
 }
 \examples{
-mgsub("hey, ho",list("hey"="ho","ho"="hey"))
-mgsub("developer",list("e" ="p", "p" = "e"))
+mgsub("hey, ho",pattern=c("hey","ho"),replacement=c("ho","hey"))
+mgsub("developer",pattern=c("e","p"),replacement=c("p","e"))
 mgsub("The chemical Dopaziamine is fake",
-      list("dopa(.*?) "="mega\\\\1 ","fake"="real"),
+      pattern=c("dopa(.*?) ","fake"),
+      replacement=c("mega\\\\1 ","real"),
       ignore.case=TRUE)
 }

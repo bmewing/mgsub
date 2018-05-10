@@ -1,13 +1,9 @@
 #mgsub--------
-context("NSE wrapper")
+context("Primary Call")
 
 test_that("basic functionality",{
   expect_equal(mgsub("hey, ho",pattern=c("hey","ho"),replacement=c("ho","hey")),"ho, hey")
-})
-
-test_that("dictionary input throws warning",{
-  expect_warning(mgsub("hey, ho",list("hey"="ho","ho"="hey")))
-  expect_warning(mgsub("hey, ho",conversions = list("hey"="ho","ho"="hey")))
+  expect_equal(mgsub("Production Workers, All Other",c("s$","s([[:punct:] ])",",? All Other$"),c("","\\1","")),"Production Workers")
 })
 
 test_that("non-named mgsub and named sub works",{
@@ -50,47 +46,14 @@ test_that("recycled replacements works",{
   expect_equal(mgsub("hey, ho",c("hey","ho"),"yo",recycle = TRUE),"yo, yo")
 })
 
-#Dictionary mode ------
-context("Dictionary mode")
-
-test_that("Letter substitution works",{
-  expect_equal(mgsub_dict("ho ho hoot",list("h"="o","o"="h")),"oh oh ohht")
-  expect_equal(mgsub_dict("developer",list("e" ="p", "p" = "e")),"dpvploepr")
+test_that("works even with start/end symbols",{
+  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("^hi"),c("bye")),c("bye there","who said hi to me?","who said hi"))
+  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("hi$"),c("bye")),c("hi there","who said hi to me?","who said bye"))
 })
 
-test_that("Non-equilength matches replace",{
-  expect_equal(mgsub_dict("hey, ho",list("hey"="ho","ho"="hey")),"ho, hey")
-  expect_equal(mgsub_dict("hi there, buddy boy!",list("there"="where","buddy"="enemy")),"hi where, enemy boy!")
-})
-
-test_that("Substring matches are superceded by longer matches",{
-  expect_equal(mgsub_dict("they don't understand the value of what they seek.",list("the"="a","they"="we")),"we don't understand a value of what we seek.")
-})
-
-test_that("Same length matches are safely converted",{
-  expect_equal(mgsub_dict("hey, how are you?",list("hey"="how","how"="are","are"="you","you"="hey")),"how, are you hey?")
-})
-
-test_that("Regular expression matches work",{
-  expect_equal(mgsub_dict("Dopazamine (of dopazamines family) is not the same as Dopachloride and is still fake.",list("[Dd]opa"="Meta","fake"="real")),"Metazamine (of Metazamines family) is not the same as Metachloride and is still real.")
-})
-
-test_that("Regular expression substitions work",{
-  expect_equal(mgsub_dict("Dopazamine is not the same as Dopachloride and is still fake.",list("[Dd]opa(.*?mine)"="Meta\\1","fake"="real")),"Metazamine is not the same as Dopachloride and is still real.")
-})
-
-test_that("Options passed to sub family work",{
-  expect_equal(mgsub_dict("Dopazamine and dopaloramide are fake chemicals.",list("dopa"="meta","fake"="real"),ignore.case=TRUE),"metazamine and metaloramide are real chemicals.")
-  expect_equal(mgsub_dict("Where are the \\bspaces\\b - not the spaces I want?",list("\\bspaces\\b"="boxes","[Ww]here"="There"),fixed=TRUE),"Where are the boxes - not the spaces I want?")
-})
-
-test_that("Priority is based on matched length",{
-  expect_equal(mgsub_dict("Dopazamine is a fake chemical",list("do.*ne"="metazamine","dopazamin"="freakout"),ignore.case=TRUE),"metazamine is a fake chemical")
-})
-
-test_that("Function fails when non-named object is passed",{
-  expect_error(mgsub_dict("hey ho",list("hey","ho")))
-  expect_error(mgsub_dict("hey ho",c("hey","ho")))
+test_that("all NA fails quickly",{
+  expect_equal(mgsub(rep(NA,4),"A","b"),rep(NA,4))
+  expect_equal(mgsub(NA,"A","b"),NA)
 })
 
 #Worker --------
@@ -128,63 +91,17 @@ test_that("Options passed to sub family work",{
 })
 
 test_that("Priority is based on matched length",{
-  expect_equal(unlist(worker("Dopazamine is a fake chemical",c("do.*ne","dopazamin"),c("metazamine","freakout"),ignore.case=TRUE)),"metazamine is a fake chemical")
+  expect_equal(worker("Dopazamine is a fake chemical",c("do.*ne","dopazamin"),c("metazamine","freakout"),ignore.case=TRUE),"metazamine is a fake chemical")
 })
 
-test_that("works even with start/end symbols",{
-  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("^hi"),c("bye")),c("bye there","who said hi to me?","who said hi"))
-  expect_equal(mgsub(c("hi there","who said hi to me?","who said hi"),c("hi$"),c("bye")),c("hi there","who said hi to me?","who said bye"))
+test_that("all missing patterns works",{
+  expect_equal(worker("hi there",c("why","not","go"),c("a","b","c")),"hi there")
 })
 
-test_that("faster method works in presence of special characters",{
-  expect_equal(mgsub(c("what is \001 doing?","what about \002?"),c("what"),c("how")),c("how is \001 doing?","how about \002?"))
+test_that("some missing patterns work",{
+  expect_equal(worker("hi there",c("hi","bye"),c("bye","hi")),"bye there")
 })
 
-#Backwards compatibility------
-context("Backwards Compatibility")
-
-test_that("Letter substitution works",{
-  expect_warning(tmp <- mgsub("ho ho hoot",list("h"="o","o"="h")))
-  expect_identical(tmp,"oh oh ohht")
-  expect_warning(tmp <- mgsub("developer",list("e" ="p", "p" = "e")))
-  expect_identical(tmp,"dpvploepr")
-})
-
-test_that("Non-equilength matches replace",{
-  expect_warning(tmp <- mgsub("hey, ho",list("hey"="ho","ho"="hey")))
-  expect_identical(tmp,"ho, hey")
-  expect_warning(tmp <- mgsub("hi there, buddy boy!",list("there"="where","buddy"="enemy")))
-  expect_identical(tmp,"hi where, enemy boy!")
-})
-
-test_that("Substring matches are superceded by longer matches",{
-  expect_warning(tmp <- mgsub("they don't understand the value of what they seek.",list("the"="a","they"="we")))
-  expect_identical(tmp,"we don't understand a value of what we seek.")
-})
-
-test_that("Same length matches are safely converted",{
-  expect_warning(tmp <- mgsub("hey, how are you?",list("hey"="how","how"="are","are"="you","you"="hey")))
-  expect_identical(tmp,"how, are you hey?")
-})
-
-test_that("Regular expression matches work",{
-  expect_warning(tmp <- mgsub("Dopazamine (of dopazamines family) is not the same as Dopachloride and is still fake.",list("[Dd]opa"="Meta","fake"="real")))
-  expect_identical(tmp,"Metazamine (of Metazamines family) is not the same as Metachloride and is still real.")
-})
-
-test_that("Regular expression substitions work",{
-  expect_warning(tmp <- mgsub("Dopazamine is not the same as Dopachloride and is still fake.",list("[Dd]opa(.*?mine)"="Meta\\1","fake"="real")))
-  expect_identical(tmp,"Metazamine is not the same as Dopachloride and is still real.")
-})
-
-test_that("Options passed to sub family work",{
-  expect_warning(tmp <- mgsub("Dopazamine and dopaloramide are fake chemicals.",list("dopa"="meta","fake"="real"),ignore.case=TRUE))
-  expect_identical(tmp,"metazamine and metaloramide are real chemicals.")
-  expect_warning(tmp <- mgsub("Where are the \\bspaces\\b - not the spaces I want?",list("\\bspaces\\b"="boxes","[Ww]here"="There"),fixed=TRUE))
-  expect_identical(tmp,"Where are the boxes - not the spaces I want?")
-})
-
-test_that("Priority is based on matched length",{
-  expect_warning(tmp <- mgsub("Dopazamine is a fake chemical",list("do.*ne"="metazamine","dopazamin"="freakout"),ignore.case=TRUE))
-  expect_identical(tmp,"metazamine is a fake chemical")
+test_that("two patterns, only overlap, fast exit",{
+  expect_equal(worker("the the the",c("the","th"),c("a","b")),"a a a")
 })
