@@ -2,10 +2,7 @@
 % Please edit documentation in R/mgsub_censor.R
 \name{mgsub_censor}
 \alias{mgsub_censor}
-\title{Safe, multiple censoring of text strings
-
-\code{mgsub_censor} - A safe, simultaneous, multiple global string censoring
- (replace matches with a censoring character like '*')}
+\title{Safe, multiple censoring of text strings}
 \usage{
 mgsub_censor(string, pattern, censor = "*", split = any(nchar(censor) > 1),
   seed = NULL, ...)
@@ -27,6 +24,10 @@ split to preserve original string length}
 }
 \value{
 Censored string.
+}
+\description{
+\code{mgsub_censor} - A safe, simultaneous, multiple global string censoring
+ (replace matches with a censoring character like '*')
 }
 \details{
 When censor is provided as a >1 length vector or as a multicharacter 

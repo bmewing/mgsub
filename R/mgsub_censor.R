@@ -3,7 +3,7 @@
 mgsub_censor = function(string,pattern,censor="*",split=any(nchar(censor) > 1),seed=NULL,...){
   #' @title Safe, multiple censoring of text strings
   #' 
-  #' \code{mgsub_censor} - A safe, simultaneous, multiple global string censoring
+  #' @description \code{mgsub_censor} - A safe, simultaneous, multiple global string censoring
   #'  (replace matches with a censoring character like '*')
   #'
   #' @param string a character vector to censor
@@ -20,6 +20,7 @@ mgsub_censor = function(string,pattern,censor="*",split=any(nchar(censor) > 1),s
   #' string with split = TRUE, it will be sampled to return random censoring patterns. 
   #' This can be helpful if you want to create cartoonish swear censoring. If 
   #' needed, the randomization can be controlled with the seed argument.
+  #' 
   #' @examples
   #' mgsub_censor("Flowers for a friend",pattern=c("low"),censor="*")
   

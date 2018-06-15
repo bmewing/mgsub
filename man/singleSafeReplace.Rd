@@ -7,6 +7,10 @@
 singleSafeReplace(x, pattern, string, replacement, ...)
 }
 \arguments{
+\item{x}{Matrix of gregexpr results, 4 columns, index of column matched, 
+start of match, length of match, end of match. Produced exclusively from 
+a worker function in mgsub}
+
 \item{pattern}{Character string to be matched in the given character vector}
 
 \item{string}{a character vector where replacements are sought}
