@@ -1,3 +1,12 @@
+#mgsub 1.7
+
+* Added the mgsub_censor function which enables fast, simultaneous censoring of patterns
+
+# mgsub 1.6
+
+* New method employed leveraging gregexpr to reduce the amount of computation time spend identifying matches which slightly improves performance.
+* Added 'escapes' from the normal processing if there's only one match to replace to further improve performance.
+
 # mgsub 1.5
 
 * Removed NSE evalutaion, deprecating the named list (dictionary) method
