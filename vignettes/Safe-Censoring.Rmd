@@ -1,7 +1,5 @@
 ---
 title: "Safe Censoring"
-author: "Mark Ewing"
-date: "2018-06-15"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Safe String Censoring}
