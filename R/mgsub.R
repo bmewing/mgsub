@@ -50,8 +50,8 @@ worker = function(string,pattern,replacement,...){
   #' @param replacement Character string equal in length to pattern or of length 
   #' one which are a replacement for matched pattern.
   #' @param \dots arguments to pass to regexpr family
+  
   x0 = do.call(rbind,lapply(seq_along(pattern),getMatches,string=string,pattern=pattern,...))
-  keep = unique(x0[,1][x0[,2] != -1])
   x0 = matrix(x0[x0[,2] != -1,],ncol=4)
   uid = unique(x0[,1])
   if(nrow(x0)==0) return(string)

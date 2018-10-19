@@ -57,7 +57,6 @@ censor_worker = function(string,pattern,censor,split=any(nchar(censor) > 1),seed
                            ,string=string
                            ,pattern=pattern
                            ,...))
-  keep = unique(x0[,1][x0[,2] != -1])
   x0 = matrix(x0[x0[,2] != -1,],ncol=4)
   uid = unique(x0[,1])
   if(nrow(x0)==0) return(string)
