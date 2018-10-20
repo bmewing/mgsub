@@ -11,19 +11,21 @@ mgsub(string, pattern, replacement, recycle = FALSE, ...)
 
 \item{pattern}{Character string to be matched in the given character vector}
 
-\item{replacement}{Character string equal in length to pattern or of length one which are 
-a replacement for matched pattern.}
+\item{replacement}{Character string equal in length to pattern or of length 
+one which are a replacement for matched pattern.}
 
 \item{recycle}{logical. should replacement be recycled if lengths differ?}
 
-\item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / \code{\link[base]{sub}}}
+\item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / 
+\code{\link[base]{sub}}}
 }
 \value{
 Converted string.
 }
 \description{
-\code{mgsub} - A safe, simultaneous, multiple global string replacement wrapper that 
-allows access to multiple methods of specifying matches and replacements.
+\code{mgsub} - A safe, simultaneous, multiple global string 
+replacement wrapper that allows access to multiple methods of specifying 
+matches and replacements.
 }
 \examples{
 mgsub("hey, ho",pattern=c("hey","ho"),replacement=c("ho","hey"))

@@ -18,7 +18,7 @@ s = "hey ho, let's go!"
 gsub("hey","ho",s)
 ```
 
-## Simultaneous Substitions
+## Simultaneous Substitutions
 
 `gsub` only supports one string of matching with one string of replacement. What this means is while you can match on multiple conditions, you can only provide one condition of replacement. Below we construct a regular expression which matches on "hey" or "ho" and replaces any such matches with "yo".
 

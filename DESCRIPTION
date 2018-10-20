@@ -1,12 +1,12 @@
 Package: mgsub
 Type: Package
 Title: Safe, Multiple, Simultaneous String Substitution
-Version: 1.5.0
+Version: 1.8.0
 Author: Mark Ewing
-Maintainer: Mark Ewing <mewing@eastman.com>
+Maintainer: Mark Ewing <b.mark@ewingsonline.com>
 Description: Designed to enable simultaneous substitution in strings in a safe fashion.
     Safe means it does not rely on placeholders (which can cause errors in same length matches).
-License: MIT + file LICENSE
+License: file LICENSE
 Encoding: UTF-8
 ByteCompile: true
 LazyData: true
