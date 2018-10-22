@@ -13,5 +13,5 @@ a worker function in mgsub}
 }
 \description{
 Helper function used to identify which results from gregexpr
-overlap other matches and filter out shorter, overlaped results
+overlap other matches and filter out shorter, overlapped results
 }

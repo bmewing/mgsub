@@ -37,7 +37,7 @@ filterOverlap = function(x){
   #' @title Filter overlaps from matches
   #' 
   #' @description Helper function used to identify which results from gregexpr
-  #' overlap other matches and filter out shorter, overlaped results
+  #' overlap other matches and filter out shorter, overlapped results
   #' 
   #' @param x Matrix of gregexpr results, 4 columns, index of column matched, 
   #' start of match, length of match, end of match. Produced exclusively from 
