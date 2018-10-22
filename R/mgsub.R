@@ -27,15 +27,25 @@ mgsub = function(string,pattern,replacement,recycle=FALSE,...){
   if(all(is.na(string))) return(string)
   sna = !is.na(string)
   if(!is.logical(recycle)) stop("Recycle must be a boolean")
-  if(!recycle & length(pattern) != length(replacement)) stop("pattern and replacement vectors must be the same length")
+  if(!recycle & length(pattern) != length(replacement)){
+    stop("pattern and replacement vectors must be the same length")
+  }
   if(length(replacement) > length(pattern)){
-    warning("You provided more replacements than search strings - some will be dropped")
+    warning("You provided more replacements than 
+            search strings - some will be dropped")
     replacement = replacement[seq_along(pattern)]
   }
   if(recycle & length(pattern) != length(replacement)){
-    replacement = rep(replacement,ceiling(length(pattern) / length(replacement)))[seq_along(pattern)]
+    lp = length(pattern)
+    lr = length(replacement)
+    replacement = rep(replacement,ceiling(lp/lr))[seq_along(pattern)]
   } 
-  result = vapply(string[sna],worker,c(""),USE.NAMES = FALSE,pattern=pattern,replacement=replacement,...)
+  result = vapply(X = string[sna],
+                  FUN = worker,
+                  FUN.VALUE = c(""),
+                  USE.NAMES = FALSE,
+                  pattern=pattern,
+                  replacement=replacement,...)
   string[sna] = result
   return(string)
 }
@@ -51,21 +61,24 @@ worker = function(string,pattern,replacement,...){
   #' one which are a replacement for matched pattern.
   #' @param \dots arguments to pass to regexpr family
   
-  x0 = do.call(rbind,lapply(seq_along(pattern),getMatches,string=string,pattern=pattern,...))
+  x0 = do.call(rbind,lapply(seq_along(pattern),
+                            getMatches,
+                            string=string,
+                            pattern=pattern,...))
   x0 = matrix(x0[x0[,2] != -1,],ncol=4)
   uid = unique(x0[,1])
   if(nrow(x0)==0) return(string)
-  if(length(unique(x0[,1])) == 1) return(fastReplace(string,pattern[uid],replacement[uid],...))
+  if(length(unique(x0[,1])) == 1){
+    return(fastReplace(string,pattern[uid],replacement[uid],...))
+  }
   if(nrow(x0) > 1){
     x = x0[order(x0[,3],decreasing = T),]
     x = filterOverlap(x)
     uid = unique(x[,1])
-    if(length(uid) == 1) return(fastReplace(string,pattern[uid],replacement[uid],...))
-    if(!is.null(dim(x))){
-      x = x[order(x[,2]),]
-    } else {
-      return(singleSafeReplace(x,pattern,string,replacement,...))
+    if(length(uid) == 1){
+      return(fastReplace(string,pattern[uid],replacement[uid],...))
     }
+    x = x[order(x[,2]),] 
   }
   for(i in nrow(x):1){
     s = x[i,2]
