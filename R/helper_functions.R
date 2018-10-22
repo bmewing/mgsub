@@ -16,31 +16,6 @@ fastReplace = function(string,pattern,replacement,...){
   return(string)
 }
 
-singleSafeReplace = function(x,pattern,string,replacement,...){
-  #' @title Single safe replace
-  #' 
-  #' @description Fast escape function for limited case where only one pattern
-  #' should be matched due to overlaps
-  #' 
-  #' @param x Matrix of gregexpr results, 4 columns, index of column matched, 
-  #' start of match, length of match, end of match. Produced exclusively from 
-  #' a worker function in mgsub
-  #' @param string a character vector where replacements are sought
-  #' @param pattern Character string to be matched in the given character vector
-  #' @param replacement Character string equal in length to pattern or of length 
-  #' one which are a replacement for matched pattern.
-  #' @param \dots arguments to pass to sub
-  
-  s = x[2]
-  e = x[4]
-  p = pattern[x[1]]
-  pre = if(s > 1) substr(string,1,s-1) else ""
-  r = sub(p,replacement[pattern == p],substr(string,s,e),...)
-  end = if(e < nchar(string)) substr(string,e+1,nchar(string)) else ""
-  string = paste0(pre,r,end)
-  return(string)
-}
-
 getMatches = function(string,pattern,i,...){
   #' @title Get all matches
   #' 

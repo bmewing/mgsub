@@ -1,7 +1,5 @@
 ---
 title: "Safe Substitution"
-author: "Mark Ewing"
-date: "2018-01-22"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Safe String Substitution}

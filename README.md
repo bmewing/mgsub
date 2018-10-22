@@ -1,4 +1,4 @@
-# mgsub 
+![mgsub logo](https://s3.amazonaws.com/mgsub/logo.jpg)
 
 ***A safe, multiple, simultaneous string substitution function***
 
