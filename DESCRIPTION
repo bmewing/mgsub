@@ -1,7 +1,7 @@
 Package: mgsub
 Type: Package
 Title: Safe, Multiple, Simultaneous String Substitution
-Version: 1.9.0
+Version: 1.7.0
 Author: Mark Ewing
 Maintainer: Mark Ewing <b.mark@ewingsonline.com>
 Description: Designed to enable simultaneous substitution in strings in a safe fashion.
