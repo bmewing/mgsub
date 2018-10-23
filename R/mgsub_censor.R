@@ -63,11 +63,7 @@ censor_worker = function(string,pattern,censor,split=any(nchar(censor) > 1),seed
   if(nrow(x0) > 1){
     x = x0[order(x0[,3],decreasing = T),]
     x = filterOverlap(x)
-    if(!is.null(dim(x))){
-      x = x[order(x[,2]),,drop=FALSE]
-    } else {
-      x = matrix(x[1,],ncol=4)
-    }
+    x = x[order(x[,2]),,drop=FALSE]
   } else {
     x = x0
   }
