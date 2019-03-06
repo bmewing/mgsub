@@ -1,5 +1,6 @@
 #mgsub_censor--------
 context("Censor Call")
+suppressWarnings(RNGversion("3.5.0"))
 
 test_that("basic functionality",{
   expect_equal(mgsub_censor("hey, ho",pattern=c("hey","ho"),censor="*"),"***, **")
