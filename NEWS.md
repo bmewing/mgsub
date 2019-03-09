@@ -1,4 +1,8 @@
-#mgsub 1.7
+# mgsub 1.7.1
+
+* Added RNG Version control to the tests to support future versions of R. There are no functional changes to the way the package runs, this is only to ensure the testing environment continues to work as expected.
+
+# mgsub 1.7
 
 * Added the mgsub_censor function which enables fast, simultaneous censoring of patterns
 * Trimmed unncessary logic and helper functions
