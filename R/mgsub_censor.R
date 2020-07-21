@@ -12,8 +12,8 @@ mgsub_censor = function(string,pattern,censor="*",split=any(nchar(censor) > 1),s
   #' @param split if a multicharacter censor pattern is provided, should it be 
   #' split to preserve original string length
   #' @param seed optional parameter to fix sampling of multicharacter censors
-  #' @param \dots arguments to pass to \code{\link[base]{regexpr}} / 
-  #' \code{\link[base]{sub}}
+  #' @param \dots arguments to pass to \code{\link[base:grep]{regexpr}} / 
+  #' \code{\link[base:grep]{sub}}
   #' @rdname mgsub_censor
   #' @return Censored string.
   #' @details When censor is provided as a >1 length vector or as a multicharacter 
