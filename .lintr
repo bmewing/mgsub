@@ -1,0 +1,1 @@
+linters: source("internal_data/eq_assign_linter.R"); with_defaults(line_length_linter = line_length_linter(120), assignment_linter = new_assignment_linter)
