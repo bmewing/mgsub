@@ -4,3 +4,5 @@
 ^.*\.yml$
 ^\..*$
 ^cran-comments\.md$
+CONTRIBUTING\.md
+internal_data
