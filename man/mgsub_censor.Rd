@@ -20,12 +20,12 @@ mgsub_censor(
 
 \item{censor}{character to use in censoring - see details}
 
-\item{split}{if a multicharacter censor pattern is provided, should it be 
+\item{split}{if a multicharacter censor pattern is provided, should it be
 split to preserve original string length}
 
 \item{seed}{optional parameter to fix sampling of multicharacter censors}
 
-\item{\dots}{arguments to pass to \code{\link[base:grep]{regexpr}} / 
+\item{\dots}{arguments to pass to \code{\link[base:grep]{regexpr}} /
 \code{\link[base:grep]{sub}}}
 }
 \value{
@@ -36,11 +36,11 @@ Censored string.
  (replace matches with a censoring character like '*')
 }
 \details{
-When censor is provided as a >1 length vector or as a multicharacter 
-string with split = TRUE, it will be sampled to return random censoring patterns. 
-This can be helpful if you want to create cartoonish swear censoring. If 
+When censor is provided as a >1 length vector or as a multicharacter
+string with split = TRUE, it will be sampled to return random censoring patterns.
+This can be helpful if you want to create cartoonish swear censoring. If
 needed, the randomization can be controlled with the seed argument.
 }
 \examples{
-mgsub_censor("Flowers for a friend",pattern=c("low"),censor="*")
+mgsub_censor("Flowers for a friend", pattern=c("low"), censor="*")
 }

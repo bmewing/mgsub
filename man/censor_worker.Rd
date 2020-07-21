@@ -20,7 +20,7 @@ censor_worker(
 
 \item{censor}{character to use in censoring - see details}
 
-\item{split}{if a multicharacter censor pattern is provided, should it be 
+\item{split}{if a multicharacter censor pattern is provided, should it be
 split to preserve original string length}
 
 \item{seed}{optional parameter to fix sampling of multicharacter censors}

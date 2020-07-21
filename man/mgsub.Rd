@@ -11,27 +11,27 @@ mgsub(string, pattern, replacement, recycle = FALSE, ...)
 
 \item{pattern}{Character string to be matched in the given character vector}
 
-\item{replacement}{Character string equal in length to pattern or of length 
+\item{replacement}{Character string equal in length to pattern or of length
 one which are a replacement for matched pattern.}
 
 \item{recycle}{logical. should replacement be recycled if lengths differ?}
 
-\item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / 
+\item{\dots}{arguments to pass to \code{\link[base]{regexpr}} /
 \code{\link[base]{sub}}}
 }
 \value{
 Converted string.
 }
 \description{
-\code{mgsub} - A safe, simultaneous, multiple global string 
-replacement wrapper that allows access to multiple methods of specifying 
+\code{mgsub} - A safe, simultaneous, multiple global string
+replacement wrapper that allows access to multiple methods of specifying
 matches and replacements.
 }
 \examples{
-mgsub("hey, ho",pattern=c("hey","ho"),replacement=c("ho","hey"))
-mgsub("developer",pattern=c("e","p"),replacement=c("p","e"))
+mgsub("hey, ho", pattern = c("hey", "ho"), replacement = c("ho", "hey"))
+mgsub("developer", pattern = c("e", "p"), replacement = c("p", "e"))
 mgsub("The chemical Dopaziamine is fake",
-      pattern=c("dopa(.*?) ","fake"),
-      replacement=c("mega\\\\1 ","real"),
-      ignore.case=TRUE)
+      pattern = c("dopa(.*?) ", "fake"),
+      replacement = c("mega\\\\1 ", "real"),
+      ignore.case = TRUE)
 }
