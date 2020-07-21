@@ -16,22 +16,22 @@ Given a goal of preserving length, this could be accomplished when working with 
 ```{r}
 library(mgsub)
 string = "Time to flip this family into a fun pit of pudding!"
-pattern = c("flip","family","fun")
-replacement = vapply(pattern,function(x){
-  paste(rep("*",nchar(x)),collapse="")
-},FUN.VALUE = "")
-mgsub(string,pattern,replacement)
+pattern = c("flip", "family", "fun")
+replacement = vapply(pattern, function(x) {
+  paste(rep("*", nchar(x)), collapse = "")
+}, FUN.VALUE = "")
+mgsub(string, pattern, replacement)
 ```
 
 However, this can breakdown when using variable length regular expression matching. The number of censor characters in the replacement is based on the length of the regular expression, not the match itself. So this fails to maintain character length.
 
 ```{r}
 string = "Time to flip this family into a fun pit of pudding!"
-pattern = c("f[^ ]*i[^ ]*","fun")
-replacement = vapply(pattern,function(x){
-  paste(rep("*",nchar(x)),collapse="")
-},FUN.VALUE = "")
-mgsub(string,pattern,replacement)
+pattern = c("f[^ ]*i[^ ]*", "fun")
+replacement = vapply(pattern, function(x) {
+  paste(rep("*", nchar(x)), collapse = "")
+}, FUN.VALUE = "")
+mgsub(string, pattern, replacement)
 ```
 
 Even if you have fixed matches, it shouldn't be necessary to produce and maintain an equivalent vector of censor replacment.
@@ -42,8 +42,8 @@ This is where the idea of `mgsub_censor` comes in.  `mgsub_censor` provides the 
 
 ```{r}
 string = "Time to flip this family into a fun pit of pudding!"
-pattern = c("f[^ ]*i[^ ]*","fun")
-mgsub::mgsub_censor(string = string,pattern = pattern,censor = "*")
+pattern = c("f[^ ]*i[^ ]*", "fun")
+mgsub::mgsub_censor(string = string, pattern = pattern, censor = "*")
 ```
 
 ### Multicharacter censoring
@@ -58,8 +58,8 @@ If the `split` argument is TRUE (by default it is in this case), the value will 
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = "?#!*"
-print(mgsub::mgsub_censor(string,pattern,censor,split=TRUE))
-print(mgsub::mgsub_censor(string,pattern,censor,split=TRUE))
+print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
+print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
 ```
 
 The randomness can be limited by setting a seed.
@@ -68,7 +68,7 @@ The randomness can be limited by setting a seed.
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = "?#!*"
-mgsub::mgsub_censor(string,pattern,censor,split=TRUE,seed=1002)
+mgsub::mgsub_censor(string, pattern, censor, split = TRUE, seed = 1002)
 ```
 
 It is also possible to produce output with more characters than the input by setting split to FALSE. In this case, the 4 character censor will be replicated 4 times because of the match length and so the output is 12 characters longer than the input. Use this with caution.
@@ -77,20 +77,20 @@ It is also possible to produce output with more characters than the input by set
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = "?#!*"
-mgsub::mgsub_censor(string,pattern,censor,split=FALSE)
+mgsub::mgsub_censor(string, pattern, censor, split = FALSE)
 ```
 
 #### Single character, vector with length greater than one
 
-This is the same as the case with a multicharacter, vector of length one and split = TRUE. Note how setting split=FALSE doesn't impact output character count.
+This is the same as the case with a multicharacter, vector of length one and split = TRUE. Note how setting split = FALSE doesn't impact output character count.
 
 ```{r}
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
-censor = c("?","#","!","*")
-print(mgsub::mgsub_censor(string,pattern,censor,split=TRUE))
-print(mgsub::mgsub_censor(string,pattern,censor,split=FALSE))
-print(mgsub::mgsub_censor(string,pattern,censor,seed=1002))
+censor = c("?", "#", "!", "*")
+print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
+print(mgsub::mgsub_censor(string, pattern, censor, split = FALSE))
+print(mgsub::mgsub_censor(string, pattern, censor, seed = 1002))
 ```
 
 #### Multicharacter, vector with length greater than one
@@ -100,19 +100,19 @@ In this case, when split = TRUE, the fact that the vector has a length greater t
 ```{r}
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
-censor = c("?#","!*")
-print(mgsub::mgsub_censor(string,pattern,censor,split=TRUE))
-print(mgsub::mgsub_censor(string,pattern,censor,split=TRUE))
-print(mgsub::mgsub_censor(string,pattern,censor,split=TRUE,seed=1002))
+censor = c("?#", "!*")
+print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
+print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
+print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE, seed = 1002))
 ```
 
-When split is set to FALSE, it's the same case as a length one, multicharacter censor except that the vector elements are sampled.  Here we sample between two 2-character elements four times so we end up with 8 characters, 4 more than we started with. Use split=FALSE with caution.
+When split is set to FALSE, it's the same case as a length one, multicharacter censor except that the vector elements are sampled.  Here we sample between two 2-character elements four times so we end up with 8 characters, 4 more than we started with. Use split = FALSE with caution.
 
 ```{r}
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
-censor = c("?#","!*")
-mgsub::mgsub_censor(string,pattern,censor,split=FALSE)
+censor = c("?#", "!*")
+mgsub::mgsub_censor(string, pattern, censor, split = FALSE)
 ```
 
 ### Safe Censoring
@@ -126,9 +126,9 @@ The most compelling feature of `mgsub` is it's safety. Here is a quick overview 
 
 ```{r}
 string = "I'm selling 100 kilograms of bleach for $20/kilo"
-pattern = c("kilo","kilogram")
+pattern = c("kilo", "kilogram")
 censor = "*"
-mgsub::mgsub_censor(string,pattern,censor)
+mgsub::mgsub_censor(string, pattern, censor)
 ```
 
 ## Performance
@@ -138,19 +138,19 @@ How does `mgsub_censor` stack up against `mgsub` in the fixed case? In this toy 
 ```{r}
 library(microbenchmark)
 
-mgsub_test = function(){
+mgsub_test = function() {
   string = "Time to flip this family into a fun pit of pudding!"
-  pattern = c("flip","family","fun")
-  replacement = vapply(pattern,function(x){
-    paste(rep("*",nchar(x)),collapse="")
-  },FUN.VALUE = "")
-  mgsub::mgsub(string,pattern,replacement)
+  pattern = c("flip", "family", "fun")
+  replacement = vapply(pattern, function(x) {
+    paste(rep("*", nchar(x)), collapse = "")
+  }, FUN.VALUE = "")
+  mgsub::mgsub(string, pattern, replacement)
 }
 
-mgsub_censor_test = function(){
+mgsub_censor_test = function() {
   string = "Time to flip this family into a fun pit of pudding!"
-  pattern = c("flip","family","fun")
-  mgsub::mgsub_censor(string,pattern,"*")
+  pattern = c("flip", "family", "fun")
+  mgsub::mgsub_censor(string, pattern, "*")
 }
 
 microbenchmark(

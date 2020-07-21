@@ -13,7 +13,7 @@ Modifying existing strings via substitution is a common practice in programing. 
 
 ```{r}
 s = "hey ho, let's go!"
-gsub("hey","ho",s)
+gsub("hey", "ho", s)
 ```
 
 ## Simultaneous Substitutions
@@ -22,15 +22,15 @@ gsub("hey","ho",s)
 
 ```{r}
 s = "hey ho, let's go!"
-gsub("hey|ho","yo",s)
+gsub("hey|ho", "yo", s)
 ```
 
 If you wanted to replace "hey" with "get" and "ho" with "ready" you would need two steps.
 
 ```{r}
 s = "hey ho, let's go!"
-s_new = gsub("hey","get",s)
-s_new = gsub("ho","ready",s_new)
+s_new = gsub("hey", "get", s)
+s_new = gsub("ho", "ready", s_new)
 s_new
 ```
 
@@ -38,8 +38,8 @@ This sequential process however can result in undesired changes.  If we want to 
 
 ```{r}
 s = "hey ho, let's go!"
-s_new = gsub("hey","ho",s)
-s_new = gsub("ho","hey",s_new)
+s_new = gsub("hey", "ho", s)
+s_new = gsub("ho", "hey", s_new)
 s_new
 ```
 
@@ -50,7 +50,7 @@ This is where the idea of `mgsub` comes in.  `mgsub` is a safe, simultaneous str
 ```{r}
 library(mgsub)
 s = "hey ho, let's go!"
-mgsub::mgsub(string = s,pattern = c("hey","ho"),replacement = c("ho","hey"))
+mgsub::mgsub(string = s, pattern = c("hey", "ho"), replacement = c("ho", "hey"))
 ```
 
 ### Regular Expression Support
@@ -59,18 +59,18 @@ mgsub::mgsub(string = s,pattern = c("hey","ho"),replacement = c("ho","hey"))
 
 ```{r}
 s = "Dopazamine is not the same as dopachloride or dopastriamine, yet is still fake."
-pattern = c("[Dd]opa([^ ]*?mine)","fake")
-replacement = c("Meta\\1","real")
-mgsub::mgsub(s,pattern,replacement)
+pattern = c("[Dd]opa([^ ]*?mine)", "fake")
+replacement = c("Meta\\1", "real")
+mgsub::mgsub(s, pattern, replacement)
 ```
 
 Furthermore, you can pass through any options from the `gsub` family.  In the example below you can see fixed string matching
 
 ```{r}
 s = "All my life I chased $money$ and .power. - not love!"
-pattern = c("$money$",".power.","love")
-replacement = c("balloons","dolphins","success")
-mgsub::mgsub(s,pattern,replacement,fixed=TRUE)
+pattern = c("$money$", ".power.", "love")
+replacement = c("balloons", "dolphins", "success")
+mgsub::mgsub(s, pattern, replacement, fixed = TRUE)
 ```
 
 ### Safe Substitution
@@ -84,40 +84,40 @@ First, a demonstration of the first form of safety.  Note how we are searching f
 
 ```{r}
 s = "they don't understand the value of what they seek."
-pattern = c("the","they")
-replacement = c("a","we")
-mgsub::mgsub(s,pattern,replacement)
+pattern = c("the", "they")
+replacement = c("a", "we")
+mgsub::mgsub(s, pattern, replacement)
 ```
 
 ```{r}
-qdap::mgsub(pattern,replacement,s)
+qdap::mgsub(pattern, replacement, s)
 ```
 
 We can continue to test this by using variable length regular expression matches. Note that we provide two different matching criteria, one a regular expression of length 6 but which matches a length 10 and the other a match of length 9.  However, `qdap` only prioritizes based on the length of the regular expression, not on the actual length of the match.  While this is an edge case, it an example of safety provided by `mgsub`.
 
 ```{r}
 s = "Dopazamine is a fake chemical"
-pattern = c("dopazamin","do.*ne")
-replacement = c("freakout","metazamine")
-mgsub::mgsub(s,pattern,replacement,ignore.case=TRUE)
+pattern = c("dopazamin", "do.*ne")
+replacement = c("freakout", "metazamine")
+mgsub::mgsub(s, pattern, replacement, ignore.case = TRUE)
 ```
 
 ```{r}
-qdap::mgsub(pattern,replacement,s,fixed = FALSE,ignore.case=TRUE)
+qdap::mgsub(pattern, replacement, s, fixed = FALSE, ignore.case = TRUE)
 ```
 
 In the second case, `mgsub` does not utilize placeholders and therefore guarantees no string collisions when replacing.  Consider a simple example of shifting each word in the following string one spot to the left.  `mgsub` correctly shifts each word while `qdap` provides two wrong sets of substitutions depending on the other arguments you provide.
 
 ```{r}
 s = "hey, how are you?"
-pattern = c("hey","how","are","you")
-replacement = c("how","are","you","hey")
-mgsub::mgsub(s,pattern,replacement)
+pattern = c("hey", "how", "are", "you")
+replacement = c("how", "are", "you", "hey")
+mgsub::mgsub(s, pattern, replacement)
 ```
 
 ```{r}
-print(qdap::mgsub(pattern,replacement,s))
-print(qdap::mgsub(pattern,replacement,s,fixed=FALSE,ignore.case=TRUE))
+print(qdap::mgsub(pattern, replacement, s))
+print(qdap::mgsub(pattern, replacement, s, fixed = FALSE, ignore.case = TRUE))
 ```
 
 ## Performance
@@ -129,16 +129,16 @@ library(microbenchmark)
 
 s = c("Dopazamine is not the same as Dopachloride and is still fake.",
       "dopazamine is undergoing a review by the fake news arm of the Dopazamine government")
-pattern = c("[Dd]opa(.*?mine)","fake")
-replacement = c("Meta\\1","real")
+pattern = c("[Dd]opa(.*?mine)", "fake")
+replacement = c("Meta\\1", "real")
 
 microbenchmark(
-  mgsub = mgsub::mgsub(s[1],pattern,replacement),
-  qdap = qdap::mgsub(pattern,replacement,s[1],fixed=FALSE)
+  mgsub = mgsub::mgsub(s[1], pattern, replacement),
+  qdap = qdap::mgsub(pattern, replacement, s[1], fixed = FALSE)
 )
 
 microbenchmark(
-  mgsub = mgsub::mgsub(s,pattern,replacement),
-  qdap = qdap::mgsub(pattern,replacement,s,fixed=FALSE)
+  mgsub = mgsub::mgsub(s, pattern, replacement),
+  qdap = qdap::mgsub(pattern, replacement, s, fixed = FALSE)
 )
 ```

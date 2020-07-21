@@ -11,7 +11,7 @@ worker(string, pattern, replacement, ...)
 
 \item{pattern}{Character string to be matched in the given character vector}
 
-\item{replacement}{Character string equal in length to pattern or of length 
+\item{replacement}{Character string equal in length to pattern or of length
 one which are a replacement for matched pattern.}
 
 \item{\dots}{arguments to pass to regexpr family}
