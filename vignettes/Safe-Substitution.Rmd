@@ -70,7 +70,7 @@ Furthermore, you can pass through any options from the `gsub` family.  In the ex
 s = "All my life I chased $money$ and .power. - not love!"
 pattern = c("$money$", ".power.", "love")
 replacement = c("balloons", "dolphins", "success")
-mgsub::mgsub(s, pattern, replacement, fixed=TRUE)
+mgsub::mgsub(s, pattern, replacement, fixed = TRUE)
 ```
 
 ### Safe Substitution
@@ -99,11 +99,11 @@ We can continue to test this by using variable length regular expression matches
 s = "Dopazamine is a fake chemical"
 pattern = c("dopazamin", "do.*ne")
 replacement = c("freakout", "metazamine")
-mgsub::mgsub(s, pattern, replacement, ignore.case=TRUE)
+mgsub::mgsub(s, pattern, replacement, ignore.case = TRUE)
 ```
 
 ```{r}
-qdap::mgsub(pattern, replacement, s, fixed = FALSE, ignore.case=TRUE)
+qdap::mgsub(pattern, replacement, s, fixed = FALSE, ignore.case = TRUE)
 ```
 
 In the second case, `mgsub` does not utilize placeholders and therefore guarantees no string collisions when replacing.  Consider a simple example of shifting each word in the following string one spot to the left.  `mgsub` correctly shifts each word while `qdap` provides two wrong sets of substitutions depending on the other arguments you provide.
@@ -117,7 +117,7 @@ mgsub::mgsub(s, pattern, replacement)
 
 ```{r}
 print(qdap::mgsub(pattern, replacement, s))
-print(qdap::mgsub(pattern, replacement, s, fixed=FALSE, ignore.case=TRUE))
+print(qdap::mgsub(pattern, replacement, s, fixed = FALSE, ignore.case = TRUE))
 ```
 
 ## Performance
@@ -134,11 +134,11 @@ replacement = c("Meta\\1", "real")
 
 microbenchmark(
   mgsub = mgsub::mgsub(s[1], pattern, replacement), 
-  qdap = qdap::mgsub(pattern, replacement, s[1], fixed=FALSE)
+  qdap = qdap::mgsub(pattern, replacement, s[1], fixed = FALSE)
 )
 
 microbenchmark(
   mgsub = mgsub::mgsub(s, pattern, replacement), 
-  qdap = qdap::mgsub(pattern, replacement, s, fixed=FALSE)
+  qdap = qdap::mgsub(pattern, replacement, s, fixed = FALSE)
 )
 ```
