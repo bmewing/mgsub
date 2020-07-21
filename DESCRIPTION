@@ -2,8 +2,10 @@ Package: mgsub
 Type: Package
 Title: Safe, Multiple, Simultaneous String Substitution
 Version: 1.7.1
-Author: Mark Ewing
-Maintainer: Mark Ewing <b.mark@ewingsonline.com>
+Authors@R: c(
+    person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre""))
+)
+BugReports: https://github.com/bmewing/mgsub/issues
 Description: Designed to enable simultaneous substitution in strings in a safe fashion.
     Safe means it does not rely on placeholders (which can cause errors in same length matches).
 License: MIT + file LICENSE
