@@ -154,7 +154,7 @@ mgsub_censor_test = function() {
 }
 
 microbenchmark(
-  mgsub = mgsub_test(), 
+  mgsub = mgsub_test(),
   mgsub_censor = mgsub_censor_test()
 )
 ```

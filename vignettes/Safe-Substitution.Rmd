@@ -127,18 +127,18 @@ print(qdap::mgsub(pattern, replacement, s, fixed = FALSE, ignore.case = TRUE))
 ```{r}
 library(microbenchmark)
 
-s = c("Dopazamine is not the same as Dopachloride and is still fake.", 
+s = c("Dopazamine is not the same as Dopachloride and is still fake.",
       "dopazamine is undergoing a review by the fake news arm of the Dopazamine government")
 pattern = c("[Dd]opa(.*?mine)", "fake")
 replacement = c("Meta\\1", "real")
 
 microbenchmark(
-  mgsub = mgsub::mgsub(s[1], pattern, replacement), 
+  mgsub = mgsub::mgsub(s[1], pattern, replacement),
   qdap = qdap::mgsub(pattern, replacement, s[1], fixed = FALSE)
 )
 
 microbenchmark(
-  mgsub = mgsub::mgsub(s, pattern, replacement), 
+  mgsub = mgsub::mgsub(s, pattern, replacement),
   qdap = qdap::mgsub(pattern, replacement, s, fixed = FALSE)
 )
 ```
