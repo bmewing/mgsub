@@ -3,8 +3,8 @@ Type: Package
 Title: Safe, Multiple, Simultaneous String Substitution
 Version: 1.7.1
 Authors@R: c(
-    person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre""))
-)
+  person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre"))
+  )
 BugReports: https://github.com/bmewing/mgsub/issues
 Description: Designed to enable simultaneous substitution in strings in a safe fashion.
     Safe means it does not rely on placeholders (which can cause errors in same length matches).
@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 ByteCompile: true
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 Suggests: covr,
     testthat,
     knitr,

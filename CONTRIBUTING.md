@@ -29,7 +29,7 @@ requested.
 
    ```yaml
    Authors@R: c(
-    person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre"")),
+    person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre")),
     person("Your", "Name", role=c("aut"))
     )
    ```

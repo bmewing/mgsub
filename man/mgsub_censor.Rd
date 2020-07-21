@@ -4,8 +4,14 @@
 \alias{mgsub_censor}
 \title{Safe, multiple censoring of text strings}
 \usage{
-mgsub_censor(string, pattern, censor = "*", split = any(nchar(censor) >
-  1), seed = NULL, ...)
+mgsub_censor(
+  string,
+  pattern,
+  censor = "*",
+  split = any(nchar(censor) > 1),
+  seed = NULL,
+  ...
+)
 }
 \arguments{
 \item{string}{a character vector to censor}
@@ -19,8 +25,8 @@ split to preserve original string length}
 
 \item{seed}{optional parameter to fix sampling of multicharacter censors}
 
-\item{\dots}{arguments to pass to \code{\link[base]{regexpr}} / 
-\code{\link[base]{sub}}}
+\item{\dots}{arguments to pass to \code{\link[base:grep]{regexpr}} / 
+\code{\link[base:grep]{sub}}}
 }
 \value{
 Censored string.
