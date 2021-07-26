@@ -11,7 +11,6 @@ Description: Designed to enable simultaneous substitution in strings in a safe f
 License: MIT + file LICENSE
 Encoding: UTF-8
 ByteCompile: true
-LazyData: true
 RoxygenNote: 7.1.1
 Suggests: covr,
     testthat,
