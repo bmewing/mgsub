@@ -130,31 +130,3 @@ pattern = c("kilo", "kilogram")
 censor = "*"
 mgsub::mgsub_censor(string, pattern, censor)
 ```
-
-## Performance
-
-How does `mgsub_censor` stack up against `mgsub` in the fixed case? In this toy example, it's not making a huge impact, but it is about 10% faster thanks to not needing to generate replacement strings first.
-
-```{r}
-library(microbenchmark)
-
-mgsub_test = function() {
-  string = "Time to flip this family into a fun pit of pudding!"
-  pattern = c("flip", "family", "fun")
-  replacement = vapply(pattern, function(x) {
-    paste(rep("*", nchar(x)), collapse = "")
-  }, FUN.VALUE = "")
-  mgsub::mgsub(string, pattern, replacement)
-}
-
-mgsub_censor_test = function() {
-  string = "Time to flip this family into a fun pit of pudding!"
-  pattern = c("flip", "family", "fun")
-  mgsub::mgsub_censor(string, pattern, "*")
-}
-
-microbenchmark(
-  mgsub = mgsub_test(),
-  mgsub_censor = mgsub_censor_test()
-)
-```
