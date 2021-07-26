@@ -4,14 +4,8 @@
 \alias{censor_worker}
 \title{mgsub_censor worker}
 \usage{
-censor_worker(
-  string,
-  pattern,
-  censor,
-  split = any(nchar(censor) > 1),
-  seed = NULL,
-  ...
-)
+censor_worker(string, pattern, censor, split = any(nchar(censor) > 1),
+  seed = NULL, ...)
 }
 \arguments{
 \item{string}{a character vector where replacements are sought}

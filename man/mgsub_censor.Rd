@@ -4,14 +4,8 @@
 \alias{mgsub_censor}
 \title{Safe, multiple censoring of text strings}
 \usage{
-mgsub_censor(
-  string,
-  pattern,
-  censor = "*",
-  split = any(nchar(censor) > 1),
-  seed = NULL,
-  ...
-)
+mgsub_censor(string, pattern, censor = "*", split = any(nchar(censor) >
+  1), seed = NULL, ...)
 }
 \arguments{
 \item{string}{a character vector to censor}
