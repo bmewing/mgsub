@@ -1,5 +1,5 @@
 ---
-title: "Safe Substitution"
+title: "Safe String Substitution"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Safe String Substitution}
