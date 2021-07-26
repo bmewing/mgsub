@@ -1,7 +1,7 @@
 Package: mgsub
 Type: Package
 Title: Safe, Multiple, Simultaneous String Substitution
-Version: 1.7.2
+Version: 1.7.3
 Authors@R: c(
   person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre"))
   )
@@ -16,7 +16,5 @@ RoxygenNote: 7.1.1
 Suggests: covr,
     testthat,
     knitr,
-    rmarkdown,
-    qdap,
-    microbenchmark
+    rmarkdown
 VignetteBuilder: knitr

@@ -1,3 +1,6 @@
+# mgsub 1.7.3
+* Vignettes were using the qdap package which was not available causing errors. This update only modifies the vignette to remove the use of qdap (and microbenchmark) and so these were removed from the 'suggests'.
+
 # mgsub 1.7.2
 * There was a warning surfacing in newer versions of R around how certain functions were linked to in documentation. While not technically a bug, our CICD pipeline is setup to report those as errors. To ensure full compliance with CRAN Standards, the linking was updated.
 * Very minor code refactor to apply linting standards to enable easier contribution, removed some superfulous lines.
