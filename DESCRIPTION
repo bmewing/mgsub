@@ -12,8 +12,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 ByteCompile: true
 RoxygenNote: 7.1.1
-Suggests: covr,
-    testthat,
+Suggests: testthat,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
