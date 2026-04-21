@@ -128,3 +128,446 @@ test_that("some missing patterns work", {
 test_that("two patterns, only overlap, fast exit", {
   expect_equal(worker("the the the", c("the", "th"), c("a", "b")), "a a a")
 })
+
+test_that("get_matches preserves matrix shape and content", {
+  x = get_matches("alpha beta alpha", c("alpha", "beta"), 1, fixed = TRUE)
+  expect_equal(x,
+               matrix(c(1, 1, 5, 5,
+                        1, 12, 5, 16),
+                      byrow = TRUE, ncol = 4))
+  expect_equal(dim(x), c(2, 4))
+})
+
+test_that("get_matches_base preserves matrix shape and content", {
+  x = get_matches_base("alpha beta alpha", c("alpha", "beta"), 1, fixed = TRUE)
+  expect_equal(x,
+               matrix(c(1, 1, 5, 5,
+                        1, 12, 5, 16),
+                      byrow = TRUE, ncol = 4))
+  expect_equal(dim(x), c(2, 4))
+})
+
+test_that("get_matches falls back to base implementation when native code is unavailable", {
+  mgsub_runtime$native_fallback_warned = FALSE
+
+  local_mocked_bindings(
+    has_get_matches_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_warning(
+    result <- get_matches("alpha beta alpha", c("alpha", "beta"), 1, fixed = TRUE),
+    "Using the base R fallback"
+  )
+  expect_equal(result,
+               get_matches_base("alpha beta alpha", c("alpha", "beta"), 1,
+                                fixed = TRUE))
+})
+
+test_that("native get_matches validates dots and index inputs", {
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          1L, 1L, PACKAGE = "mgsub"),
+    "dots must be a list"
+  )
+
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          c(1L, 2L), list(fixed = TRUE), PACKAGE = "mgsub"),
+    "i must have length 1"
+  )
+
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          NA_integer_, list(fixed = TRUE), PACKAGE = "mgsub"),
+    "i must not be NA"
+  )
+
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          NA_real_, list(fixed = TRUE), PACKAGE = "mgsub"),
+    "i must not be NA"
+  )
+
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          "1", list(fixed = TRUE), PACKAGE = "mgsub"),
+    "i must be numeric"
+  )
+})
+
+test_that("native get_matches accepts integer indices and validates pattern bounds", {
+  x = .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+            1L, list(fixed = TRUE), PACKAGE = "mgsub")
+  expect_equal(x,
+               matrix(c(1, 1, 5, 5,
+                        1, 12, 5, 16),
+                      byrow = TRUE, ncol = 4))
+
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", 1,
+          1L, list(fixed = TRUE), PACKAGE = "mgsub"),
+    "pattern must be a character vector"
+  )
+
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          3L, list(fixed = TRUE), PACKAGE = "mgsub"),
+    "i is out of bounds"
+  )
+})
+
+test_that("native get_matches handles malformed gregexpr output", {
+  local_mocked_bindings(
+    gregexpr = function(...) 1L,
+    .package = "base"
+  )
+
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          1L, list(fixed = TRUE), PACKAGE = "mgsub"),
+    "gregexpr did not return a list"
+  )
+})
+
+test_that("native get_matches requires match.length attribute", {
+  local_mocked_bindings(
+    gregexpr = function(...) list(1L),
+    .package = "base"
+  )
+
+  expect_error(
+    .Call("_mgsub_get_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          1L, list(fixed = TRUE), PACKAGE = "mgsub"),
+    "gregexpr result did not include match.length"
+  )
+})
+
+test_that("collect_matches preserves matrix shape and content", {
+  x = collect_matches("alpha beta alpha", c("alpha", "beta"), fixed = TRUE)
+  expect_equal(x,
+               matrix(c(1, 1, 5, 5,
+                        1, 12, 5, 16,
+                        2, 7, 4, 10),
+                      byrow = TRUE, ncol = 4))
+  expect_equal(dim(x), c(3, 4))
+})
+
+test_that("collect_matches_base preserves matrix shape and content", {
+  x = collect_matches_base("alpha beta alpha", c("alpha", "beta"), fixed = TRUE)
+  expect_equal(x,
+               matrix(c(1, 1, 5, 5,
+                        1, 12, 5, 16,
+                        2, 7, 4, 10),
+                      byrow = TRUE, ncol = 4))
+  expect_equal(dim(x), c(3, 4))
+})
+
+test_that("collect_matches falls back to base implementation when native code is unavailable", {
+  mgsub_runtime$native_fallback_warned = FALSE
+
+  local_mocked_bindings(
+    has_collect_matches_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_warning(
+    result <- collect_matches("alpha beta alpha", c("alpha", "beta"), fixed = TRUE),
+    "Using the base R fallback"
+  )
+  expect_equal(result,
+               collect_matches_base("alpha beta alpha", c("alpha", "beta"),
+                                    fixed = TRUE))
+})
+
+test_that("collect_matches with zero patterns matches existing error behavior", {
+  expect_error(collect_matches("alpha beta alpha", character(0), fixed = TRUE))
+})
+
+test_that("native collect_matches validates pattern input", {
+  expect_error(
+    .Call("_mgsub_collect_matches_cpp", "alpha beta alpha", 1,
+          list(fixed = TRUE), PACKAGE = "mgsub"),
+    "pattern must be a character vector"
+  )
+})
+
+test_that("native collect_matches handles malformed gregexpr output", {
+  local_mocked_bindings(
+    gregexpr = function(...) 1L,
+    .package = "base"
+  )
+
+  expect_error(
+    .Call("_mgsub_collect_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          list(fixed = TRUE), PACKAGE = "mgsub"),
+    "gregexpr did not return a list"
+  )
+})
+
+test_that("native collect_matches requires match.length attribute", {
+  local_mocked_bindings(
+    gregexpr = function(...) list(1L),
+    .package = "base"
+  )
+
+  expect_error(
+    .Call("_mgsub_collect_matches_cpp", "alpha beta alpha", c("alpha", "beta"),
+          list(fixed = TRUE), PACKAGE = "mgsub"),
+    "gregexpr result did not include match.length"
+  )
+})
+
+test_that("filter_overlap preserves overlap precedence and matrix shape", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+  expect_equal(filter_overlap(x),
+               matrix(c(1, 1, 4, 4,
+                        3, 6, 2, 7),
+                      byrow = TRUE, ncol = 4))
+
+  one = filter_overlap(matrix(c(1, 2, 3, 4), ncol = 4))
+  expect_equal(dim(one), c(1, 4))
+})
+
+test_that("native filter_overlap handles integer, numeric, and empty matrices", {
+  x_int = matrix(c(1L, 1L, 4L, 4L,
+                   2L, 1L, 3L, 3L,
+                   3L, 6L, 2L, 7L),
+                 byrow = TRUE, ncol = 4)
+  expect_equal(
+    .Call("_mgsub_filter_overlap_cpp", x_int, PACKAGE = "mgsub"),
+    matrix(c(1L, 1L, 4L, 4L,
+             3L, 6L, 2L, 7L),
+           byrow = TRUE, ncol = 4)
+  )
+
+  x_num = matrix(c(1, 1, 4, 4,
+                   2, 1, 3, 3,
+                   3, 6, 2, 7),
+                 byrow = TRUE, ncol = 4)
+  expect_equal(
+    .Call("_mgsub_filter_overlap_cpp", x_num, PACKAGE = "mgsub"),
+    matrix(c(1, 1, 4, 4,
+             3, 6, 2, 7),
+           byrow = TRUE, ncol = 4)
+  )
+
+  empty = matrix(integer(0), ncol = 4)
+  result = .Call("_mgsub_filter_overlap_cpp", empty, PACKAGE = "mgsub")
+  expect_equal(dim(result), c(0, 4))
+  expect_type(result, "integer")
+})
+
+test_that("native filter_overlap validates matrix input", {
+  expect_error(
+    .Call("_mgsub_filter_overlap_cpp", c(1L, 1L, 4L, 4L), PACKAGE = "mgsub"),
+    "x must be a matrix with 4 columns"
+  )
+
+  expect_error(
+    .Call("_mgsub_filter_overlap_cpp", matrix(1L, ncol = 3), PACKAGE = "mgsub"),
+    "x must be a matrix with 4 columns"
+  )
+
+  expect_error(
+    .Call("_mgsub_filter_overlap_cpp",
+          matrix(TRUE, nrow = 1, ncol = 4), PACKAGE = "mgsub"),
+    "x must be an integer or numeric matrix"
+  )
+})
+
+test_that("native filter_overlap skips previously discarded rows correctly", {
+  x = matrix(c(1L, 1L, 5L, 5L,
+               2L, 1L, 4L, 4L,
+               3L, 1L, 3L, 3L,
+               4L, 8L, 2L, 9L),
+             byrow = TRUE, ncol = 4)
+
+  expect_equal(
+    .Call("_mgsub_filter_overlap_cpp", x, PACKAGE = "mgsub"),
+    matrix(c(1L, 1L, 5L, 5L,
+             4L, 8L, 2L, 9L),
+           byrow = TRUE, ncol = 4)
+  )
+})
+
+test_that("filter_overlap_base preserves overlap precedence and matrix shape", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+  expect_equal(filter_overlap_base(x),
+               matrix(c(1, 1, 4, 4,
+                        3, 6, 2, 7),
+                      byrow = TRUE, ncol = 4))
+})
+
+test_that("filter_overlap_base drops rows when only the end position overlaps", {
+  x = matrix(c(1, 3, 3, 5,
+               2, 1, 4, 4),
+             byrow = TRUE, ncol = 4)
+
+  expect_equal(
+    filter_overlap_base(x),
+    matrix(c(1, 3, 3, 5), ncol = 4)
+  )
+})
+
+test_that("resolve_matches preserves ordering and overlap resolution", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+  expect_equal(resolve_matches(x),
+               matrix(c(1, 1, 4, 4,
+                        3, 6, 2, 7),
+                      byrow = TRUE, ncol = 4))
+})
+
+test_that("native resolve_matches handles integer, numeric, and short matrices", {
+  x_int = matrix(c(1L, 1L, 4L, 4L,
+                   2L, 1L, 3L, 3L,
+                   3L, 6L, 2L, 7L),
+                 byrow = TRUE, ncol = 4)
+  expect_equal(
+    .Call("_mgsub_resolve_matches_cpp", x_int, PACKAGE = "mgsub"),
+    matrix(c(1L, 1L, 4L, 4L,
+             3L, 6L, 2L, 7L),
+           byrow = TRUE, ncol = 4)
+  )
+
+  x_num = matrix(c(1, 1, 4, 4,
+                   2, 1, 3, 3,
+                   3, 6, 2, 7),
+                 byrow = TRUE, ncol = 4)
+  expect_equal(
+    .Call("_mgsub_resolve_matches_cpp", x_num, PACKAGE = "mgsub"),
+    matrix(c(1, 1, 4, 4,
+             3, 6, 2, 7),
+           byrow = TRUE, ncol = 4)
+  )
+
+  one = matrix(c(1L, 2L, 3L, 4L), ncol = 4)
+  expect_equal(.Call("_mgsub_resolve_matches_cpp", one, PACKAGE = "mgsub"), one)
+
+  empty = matrix(integer(0), ncol = 4)
+  result = .Call("_mgsub_resolve_matches_cpp", empty, PACKAGE = "mgsub")
+  expect_equal(dim(result), c(0, 4))
+  expect_type(result, "integer")
+})
+
+test_that("native resolve_matches validates matrix input", {
+  expect_error(
+    .Call("_mgsub_resolve_matches_cpp", c(1L, 1L, 4L, 4L), PACKAGE = "mgsub"),
+    "x must be a matrix with 4 columns"
+  )
+
+  expect_error(
+    .Call("_mgsub_resolve_matches_cpp", matrix(1L, ncol = 3), PACKAGE = "mgsub"),
+    "x must be a matrix with 4 columns"
+  )
+
+  expect_error(
+    .Call("_mgsub_resolve_matches_cpp",
+          matrix(TRUE, nrow = 1, ncol = 4), PACKAGE = "mgsub"),
+    "x must be an integer or numeric matrix"
+  )
+})
+
+test_that("resolve_matches_base preserves ordering and overlap resolution", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+  expect_equal(resolve_matches_base(x),
+               matrix(c(1, 1, 4, 4,
+                        3, 6, 2, 7),
+                      byrow = TRUE, ncol = 4))
+
+  one = resolve_matches_base(matrix(c(1, 2, 3, 4), ncol = 4))
+  expect_equal(dim(one), c(1, 4))
+})
+
+test_that("resolve_matches falls back to base implementation when native code is unavailable", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+
+  mgsub_runtime$native_fallback_warned = FALSE
+
+  local_mocked_bindings(
+    has_resolve_matches_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_warning(
+    result <- resolve_matches(x),
+    "Using the base R fallback"
+  )
+  expect_equal(result, resolve_matches_base(x))
+})
+
+test_that("filter_overlap falls back to base implementation when native code is unavailable", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+
+  mgsub_runtime$native_fallback_warned = FALSE
+
+  local_mocked_bindings(
+    has_filter_overlap_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_warning(
+    result <- filter_overlap(x),
+    "Using the base R fallback"
+  )
+  expect_equal(result, filter_overlap_base(x))
+})
+
+test_that("native fallback warning is emitted only once across helpers", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+
+  mgsub_runtime$native_fallback_warned = FALSE
+
+  local_mocked_bindings(
+    has_get_matches_native = function() FALSE,
+    has_filter_overlap_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_warning(
+    get_matches("alpha beta alpha", c("alpha", "beta"), 1, fixed = TRUE),
+    "Using the base R fallback"
+  )
+  expect_no_warning(filter_overlap(x))
+})
+
+test_that("native fallback warning can be suppressed by option", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+
+  mgsub_runtime$native_fallback_warned = FALSE
+  old = options(mgsub.warn_native_fallback = FALSE)
+  on.exit(options(old), add = TRUE)
+
+  local_mocked_bindings(
+    has_filter_overlap_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_no_warning(result <- filter_overlap(x))
+  expect_equal(result, filter_overlap_base(x))
+  expect_false(mgsub_runtime$native_fallback_warned)
+})

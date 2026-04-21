@@ -2,3 +2,4 @@
 
 export(mgsub)
 export(mgsub_censor)
+useDynLib(mgsub, .registration = TRUE)

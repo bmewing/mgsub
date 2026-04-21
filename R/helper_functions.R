@@ -1,3 +1,19 @@
+has_filter_overlap_native = function() {
+  is.loaded("_mgsub_filter_overlap_cpp", PACKAGE = "mgsub")
+}
+
+has_get_matches_native = function() {
+  is.loaded("_mgsub_get_matches_cpp", PACKAGE = "mgsub")
+}
+
+has_collect_matches_native = function() {
+  is.loaded("_mgsub_collect_matches_cpp", PACKAGE = "mgsub")
+}
+
+has_resolve_matches_native = function() {
+  is.loaded("_mgsub_resolve_matches_cpp", PACKAGE = "mgsub")
+}
+
 fast_replace = function(string, pattern, replacement, ...) {
   #' @title Fast escape replace
   #'
@@ -26,11 +42,27 @@ get_matches = function(string, pattern, i, ...) {
   #' @param pattern Character string to be matched in the given character vector
   #' @param i an iterator provided by a looping function
   #' @param \dots arguments to pass to gregexpr
+  if (has_get_matches_native()) {
+    return(.Call("_mgsub_get_matches_cpp", string, pattern, i, list(...),
+                 PACKAGE = "mgsub"))
+  }
 
-  tmp = gregexpr(pattern[i], string, ...)
-  start = tmp[[1]]
-  length = attr(tmp[[1]], "match.length")
-  return(matrix(cbind(i, start, length, start + length - 1), ncol = 4))
+  warn_native_fallback("get_matches")
+  get_matches_base(string, pattern, i, ...)
+}
+
+collect_matches = function(string, pattern, ...) {
+  if (length(pattern) == 0) {
+    return(collect_matches_base(string, pattern, ...))
+  }
+
+  if (has_collect_matches_native()) {
+    return(.Call("_mgsub_collect_matches_cpp", string, pattern, list(...),
+                 PACKAGE = "mgsub"))
+  }
+
+  warn_native_fallback("collect_matches")
+  collect_matches_base(string, pattern, ...)
 }
 
 filter_overlap = function(x) {
@@ -42,19 +74,19 @@ filter_overlap = function(x) {
   #' @param x Matrix of gregexpr results, 4 columns, index of column matched,
   #' start of match, length of match, end of match. Produced exclusively from
   #' a worker function in mgsub
-  for (i in nrow(x):2) {
-    s = x[i, 2]
-    ps = x[1:(i - 1), 2]
-    e = x[i, 4]
-    pe = x[1:(i - 1), 4]
-    if (any(ps <= s & pe >= s)) {
-      x = x[-i, ]
-      next
-    }
-    if (any(ps <= e & pe >= e)) {
-      x = x[-i, ]
-      next
-    }
+  if (has_filter_overlap_native()) {
+    return(.Call("_mgsub_filter_overlap_cpp", x, PACKAGE = "mgsub"))
   }
-  return(matrix(x, ncol = 4))
+
+  warn_native_fallback("filter_overlap")
+  filter_overlap_base(x)
+}
+
+resolve_matches = function(x) {
+  if (has_resolve_matches_native()) {
+    return(.Call("_mgsub_resolve_matches_cpp", x, PACKAGE = "mgsub"))
+  }
+
+  warn_native_fallback("resolve_matches")
+  resolve_matches_base(x)
 }

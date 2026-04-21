@@ -1,8 +1,10 @@
 ## Test environments
-* local Windows install, R 4.0.2
-* local MacOS install, R 4.0.2
-* ubuntu 16.04 (on travis-ci), R 4.0.2
-* ubuntu 16.04 (on travis-ci), R-devel
+* local Windows install, R 4.5.0
+* Windows Server 2025 (via Github Actions), R 4.5.3
+* MacOS 15.7.4 (via Github Actions), R 4.5.3
+* ubuntu 24.04.4 LTS (via Github Actions), R 4.5.3
+* ubuntu 24.04.4 LTS (via Github Actions), R 4.4.3
+* ubuntu 24.04.4 LTS (via Github Actions), R-devel
 
 ## R CMD check results
 There were no ERRORs or WARNINGs. 
