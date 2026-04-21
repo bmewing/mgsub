@@ -142,3 +142,34 @@ test_that("filter_overlap preserves overlap precedence and matrix shape", {
   one = filter_overlap(matrix(c(1, 2, 3, 4), ncol = 4))
   expect_equal(dim(one), c(1, 4))
 })
+
+test_that("filter_overlap_base preserves overlap precedence and matrix shape", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+  expect_equal(filter_overlap_base(x),
+               matrix(c(1, 1, 4, 4,
+                        3, 6, 2, 7),
+                      byrow = TRUE, ncol = 4))
+})
+
+test_that("filter_overlap falls back to base implementation when native code is unavailable", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+
+  mgsub_runtime$filter_overlap_warned = FALSE
+
+  local_mocked_bindings(
+    has_filter_overlap_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_warning(
+    result <- filter_overlap(x),
+    "Using the base R fallback for filter_overlap"
+  )
+  expect_equal(result, filter_overlap_base(x))
+})
