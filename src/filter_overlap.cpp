@@ -4,6 +4,32 @@
 
 namespace {
 
+template <typename T>
+const T* matrix_data(SEXP x);
+
+template <>
+const int* matrix_data<int>(SEXP x) {
+  return INTEGER(x);
+}
+
+template <>
+const double* matrix_data<double>(SEXP x) {
+  return REAL(x);
+}
+
+template <typename T>
+T* matrix_data_mutable(SEXP x);
+
+template <>
+int* matrix_data_mutable<int>(SEXP x) {
+  return INTEGER(x);
+}
+
+template <>
+double* matrix_data_mutable<double>(SEXP x) {
+  return REAL(x);
+}
+
 inline void validate_input(SEXP x) {
   if (!Rf_isMatrix(x)) {
     Rf_error("x must be a matrix with 4 columns");
@@ -24,7 +50,7 @@ SEXP filter_overlap_impl(SEXP x) {
   SEXP dim = Rf_getAttrib(x, R_DimSymbol);
   const int nrows = INTEGER(dim)[0];
   const int ncols = INTEGER(dim)[1];
-  T* data = reinterpret_cast<T*>(DATAPTR(x));
+  const T* data = matrix_data<T>(x);
 
   if (nrows == 0) {
     return Rf_allocMatrix(TYPEOF(x), 0, ncols);
@@ -61,7 +87,7 @@ SEXP filter_overlap_impl(SEXP x) {
   }
 
   SEXP out = PROTECT(Rf_allocMatrix(TYPEOF(x), kept, ncols));
-  T* out_data = reinterpret_cast<T*>(DATAPTR(out));
+  T* out_data = matrix_data_mutable<T>(out);
   int row = 0;
 
   for (int i = 0; i < nrows; ++i) {
