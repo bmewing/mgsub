@@ -8,3 +8,4 @@ CONTRIBUTING\.md
 internal_data
 ^benchmark$
 ^\.github$
+^CRAN-SUBMISSION$
