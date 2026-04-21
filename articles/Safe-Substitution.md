@@ -1,0 +1,112 @@
+# Safe String Substitution
+
+## String Substitutions
+
+Modifying existing strings via substitution is a common practice in
+programing. To this end, functions like `gsub` provide a method to
+accomplish this. Below is an example where “hey” is replaced with “ho”
+transforming a line from the Ramones into Santa Claus leaving on
+Christmas Eve.
+
+``` r
+s = "hey ho, let's go!"
+gsub("hey", "ho", s)
+```
+
+    ## [1] "ho ho, let's go!"
+
+## Simultaneous Substitutions
+
+`gsub` only supports one string of matching with one string of
+replacement. What this means is while you can match on multiple
+conditions, you can only provide one condition of replacement. Below we
+construct a regular expression which matches on “hey” or “ho” and
+replaces any such matches with “yo”.
+
+``` r
+s = "hey ho, let's go!"
+gsub("hey|ho", "yo", s)
+```
+
+    ## [1] "yo yo, let's go!"
+
+If you wanted to replace “hey” with “get” and “ho” with “ready” you
+would need two steps.
+
+``` r
+s = "hey ho, let's go!"
+s_new = gsub("hey", "get", s)
+s_new = gsub("ho", "ready", s_new)
+s_new
+```
+
+    ## [1] "get ready, let's go!"
+
+This sequential process however can result in undesired changes. If we
+want to swap where “hey” and “ho” are, we can see the process breaks
+down. Because each change happens in order, “hey” becomes “ho” and then
+every “ho” becomes “hey”, undoing the first step.
+
+``` r
+s = "hey ho, let's go!"
+s_new = gsub("hey", "ho", s)
+s_new = gsub("ho", "hey", s_new)
+s_new
+```
+
+    ## [1] "hey hey, let's go!"
+
+## mgsub
+
+This is where the idea of `mgsub` comes in. `mgsub` is a safe,
+simultaneous string substitution function. We pass in a patterns to
+match as well as replacements and the replacements are applied
+simultaneously.
+
+``` r
+library(mgsub)
+s = "hey ho, let's go!"
+mgsub::mgsub(string = s, pattern = c("hey", "ho"), replacement = c("ho", "hey"))
+```
+
+    ## [1] "ho hey, let's go!"
+
+### Regular Expression Support
+
+`mgsub` fully supports regular expressions as matching criteria as well
+as backreferences in the replacement. Note how the matching criteria
+ignores “dopachloride” for replacement but matches both “Dopazamine” and
+“dopastriamine” (all fake chemicals despite what the replace string
+claims!).
+
+``` r
+s = "Dopazamine is not the same as dopachloride or dopastriamine, yet is still fake."
+pattern = c("[Dd]opa([^ ]*?mine)", "fake")
+replacement = c("Meta\\1", "real")
+mgsub::mgsub(s, pattern, replacement)
+```
+
+    ## [1] "Metazamine is not the same as dopachloride or Metastriamine, yet is still real."
+
+Furthermore, you can pass through any options from the `gsub` family. In
+the example below you can see fixed string matching
+
+``` r
+s = "All my life I chased $money$ and .power. - not love!"
+pattern = c("$money$", ".power.", "love")
+replacement = c("balloons", "dolphins", "success")
+mgsub::mgsub(s, pattern, replacement, fixed = TRUE)
+```
+
+    ## [1] "All my life I chased balloons and dolphins - not success!"
+
+### Safe Substitution
+
+This is actually the most compelling feature of `mgsub`. Several
+packages implement a similar type function (also named `mgsub`) which do
+not employ safe substitution - `qdap`, `bazar` and `textclean`. Here is
+a quick overview of what is meant by safety:
+
+1.  Longer matches are preferred over shorter matches for substitution
+    first
+2.  No placeholders are used so accidental string collisions don’t occur
