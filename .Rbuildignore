@@ -9,3 +9,6 @@ internal_data
 ^benchmark$
 ^\.github$
 ^CRAN-SUBMISSION$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$

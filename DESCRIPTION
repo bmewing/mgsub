@@ -16,4 +16,4 @@ Suggests: testthat,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
-URL: https://github.com/bmewing/mgsub
+URL: https://github.com/bmewing/mgsub, https://bmewing.github.io/mgsub/
