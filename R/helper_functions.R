@@ -42,6 +42,10 @@ filter_overlap = function(x) {
   #' @param x Matrix of gregexpr results, 4 columns, index of column matched,
   #' start of match, length of match, end of match. Produced exclusively from
   #' a worker function in mgsub
+  if (is.loaded("_mgsub_filter_overlap_cpp")) {
+    return(.Call("_mgsub_filter_overlap_cpp", x, PACKAGE = "mgsub"))
+  }
+
   for (i in nrow(x):2) {
     s = x[i, 2]
     ps = x[1:(i - 1), 2]

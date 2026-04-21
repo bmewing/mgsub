@@ -128,3 +128,17 @@ test_that("some missing patterns work", {
 test_that("two patterns, only overlap, fast exit", {
   expect_equal(worker("the the the", c("the", "th"), c("a", "b")), "a a a")
 })
+
+test_that("filter_overlap preserves overlap precedence and matrix shape", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+  expect_equal(filter_overlap(x),
+               matrix(c(1, 1, 4, 4,
+                        3, 6, 2, 7),
+                      byrow = TRUE, ncol = 4))
+
+  one = filter_overlap(matrix(c(1, 2, 3, 4), ncol = 4))
+  expect_equal(dim(one), c(1, 4))
+})
