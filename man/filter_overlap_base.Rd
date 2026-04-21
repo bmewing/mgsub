@@ -12,6 +12,7 @@ start of match, length of match, end of match. Produced exclusively from
 a worker function in mgsub}
 }
 \description{
-Helper function used to identify which results from gregexpr
+Helper function using only base R functionality
+used to identify which results from gregexpr
 overlap other matches and filter out shorter, overlapped results
 }

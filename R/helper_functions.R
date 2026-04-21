@@ -1,8 +1,29 @@
 mgsub_runtime = new.env(parent = emptyenv())
-mgsub_runtime$filter_overlap_warned = FALSE
+mgsub_runtime$native_fallback_warned = FALSE
 
 has_filter_overlap_native = function() {
   is.loaded("_mgsub_filter_overlap_cpp", PACKAGE = "mgsub")
+}
+
+has_get_matches_native = function() {
+  is.loaded("_mgsub_get_matches_cpp", PACKAGE = "mgsub")
+}
+
+warn_native_fallback = function(function_name) {
+  if (!isTRUE(getOption("mgsub.warn_native_fallback", TRUE)) ||
+      isTRUE(mgsub_runtime$native_fallback_warned)) {
+    return(invisible(NULL))
+  }
+
+  warning(
+    paste(
+      "Using the base R fallback.",
+      "Rebuild or reinstall mgsub with compiled code enabled",
+      "for better performance."
+    ),
+    call. = FALSE
+  )
+  mgsub_runtime$native_fallback_warned = TRUE
 }
 
 fast_replace = function(string, pattern, replacement, ...) {
@@ -23,11 +44,11 @@ fast_replace = function(string, pattern, replacement, ...) {
   return(string)
 }
 
-get_matches = function(string, pattern, i, ...) {
-  #' @title Get all matches
+get_matches_base = function(string, pattern, i, ...) {
+  #' @title Get all matches using only base R functionality
   #'
   #' @description Helper function to be used in a loop to check each pattern
-  #' provided for matches
+  #' provided for matches when the compiled version isn't available
   #'
   #' @param string a character vector where replacements are sought
   #' @param pattern Character string to be matched in the given character vector
@@ -40,10 +61,30 @@ get_matches = function(string, pattern, i, ...) {
   return(matrix(cbind(i, start, length, start + length - 1), ncol = 4))
 }
 
+get_matches = function(string, pattern, i, ...) {
+  #' @title Get all matches
+  #'
+  #' @description Helper function to be used in a loop to check each pattern
+  #' provided for matches
+  #'
+  #' @param string a character vector where replacements are sought
+  #' @param pattern Character string to be matched in the given character vector
+  #' @param i an iterator provided by a looping function
+  #' @param \dots arguments to pass to gregexpr
+  if (has_get_matches_native()) {
+    return(.Call("_mgsub_get_matches_cpp", string, pattern, i, list(...),
+                 PACKAGE = "mgsub"))
+  }
+
+  warn_native_fallback("get_matches")
+  get_matches_base(string, pattern, i, ...)
+}
+
 filter_overlap_base = function(x) {
   #' @title Filter overlaps from matches using only base R functionality
   #'
-  #' @description Helper function used to identify which results from gregexpr
+  #' @description Helper function using only base R functionality
+  #' used to identify which results from gregexpr
   #' overlap other matches and filter out shorter, overlapped results
   #'
   #' @param x Matrix of gregexpr results, 4 columns, index of column matched,
@@ -79,18 +120,6 @@ filter_overlap = function(x) {
     return(.Call("_mgsub_filter_overlap_cpp", x, PACKAGE = "mgsub"))
   }
 
-  if (isTRUE(getOption("mgsub.warn_native_fallback", TRUE)) &&
-      !isTRUE(mgsub_runtime$filter_overlap_warned)) {
-    warning(
-      paste(
-        "Using the base R fallback for filter_overlap();",
-        "rebuild or reinstall mgsub with compiled code enabled",
-        "for better performance."
-      ),
-      call. = FALSE
-    )
-    mgsub_runtime$filter_overlap_warned = TRUE
-  }
-
+  warn_native_fallback("filter_overlap")
   filter_overlap_base(x)
 }

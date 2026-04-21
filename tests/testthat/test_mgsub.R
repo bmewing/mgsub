@@ -129,6 +129,41 @@ test_that("two patterns, only overlap, fast exit", {
   expect_equal(worker("the the the", c("the", "th"), c("a", "b")), "a a a")
 })
 
+test_that("get_matches preserves matrix shape and content", {
+  x = get_matches("alpha beta alpha", c("alpha", "beta"), 1, fixed = TRUE)
+  expect_equal(x,
+               matrix(c(1, 1, 5, 5,
+                        1, 12, 5, 16),
+                      byrow = TRUE, ncol = 4))
+  expect_equal(dim(x), c(2, 4))
+})
+
+test_that("get_matches_base preserves matrix shape and content", {
+  x = get_matches_base("alpha beta alpha", c("alpha", "beta"), 1, fixed = TRUE)
+  expect_equal(x,
+               matrix(c(1, 1, 5, 5,
+                        1, 12, 5, 16),
+                      byrow = TRUE, ncol = 4))
+  expect_equal(dim(x), c(2, 4))
+})
+
+test_that("get_matches falls back to base implementation when native code is unavailable", {
+  mgsub_runtime$native_fallback_warned = FALSE
+
+  local_mocked_bindings(
+    has_get_matches_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_warning(
+    result <- get_matches("alpha beta alpha", c("alpha", "beta"), 1, fixed = TRUE),
+    "Using the base R fallback"
+  )
+  expect_equal(result,
+               get_matches_base("alpha beta alpha", c("alpha", "beta"), 1,
+                                fixed = TRUE))
+})
+
 test_that("filter_overlap preserves overlap precedence and matrix shape", {
   x = matrix(c(1, 1, 4, 4,
                2, 1, 3, 3,
@@ -160,7 +195,7 @@ test_that("filter_overlap falls back to base implementation when native code is 
                3, 6, 2, 7),
              byrow = TRUE, ncol = 4)
 
-  mgsub_runtime$filter_overlap_warned = FALSE
+  mgsub_runtime$native_fallback_warned = FALSE
 
   local_mocked_bindings(
     has_filter_overlap_native = function() FALSE,
@@ -169,7 +204,28 @@ test_that("filter_overlap falls back to base implementation when native code is 
 
   expect_warning(
     result <- filter_overlap(x),
-    "Using the base R fallback for filter_overlap"
+    "Using the base R fallback"
   )
   expect_equal(result, filter_overlap_base(x))
+})
+
+test_that("native fallback warning is emitted only once across helpers", {
+  x = matrix(c(1, 1, 4, 4,
+               2, 1, 3, 3,
+               3, 6, 2, 7),
+             byrow = TRUE, ncol = 4)
+
+  mgsub_runtime$native_fallback_warned = FALSE
+
+  local_mocked_bindings(
+    has_get_matches_native = function() FALSE,
+    has_filter_overlap_native = function() FALSE,
+    .package = "mgsub"
+  )
+
+  expect_warning(
+    get_matches("alpha beta alpha", c("alpha", "beta"), 1, fixed = TRUE),
+    "Using the base R fallback"
+  )
+  expect_no_warning(filter_overlap(x))
 })
