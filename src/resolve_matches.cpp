@@ -122,14 +122,9 @@ SEXP resolve_matches_impl(SEXP x) {
 extern "C" SEXP _mgsub_resolve_matches_cpp(SEXP x) {
   validate_input(x);
 
-  switch (TYPEOF(x)) {
-    case INTSXP:
-      return resolve_matches_impl<int>(x);
-    case REALSXP:
-      return resolve_matches_impl<double>(x);
-    default:
-      Rf_error("x must be an integer or numeric matrix");
+  if (TYPEOF(x) == INTSXP) {
+    return resolve_matches_impl<int>(x);
   }
 
-  return R_NilValue;
+  return resolve_matches_impl<double>(x);
 }

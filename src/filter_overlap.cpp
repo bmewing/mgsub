@@ -111,14 +111,9 @@ SEXP filter_overlap_impl(SEXP x) {
 extern "C" SEXP _mgsub_filter_overlap_cpp(SEXP x) {
   validate_input(x);
 
-  switch (TYPEOF(x)) {
-    case INTSXP:
-      return filter_overlap_impl<int>(x);
-    case REALSXP:
-      return filter_overlap_impl<double>(x);
-    default:
-      Rf_error("x must be an integer or numeric matrix");
+  if (TYPEOF(x) == INTSXP) {
+    return filter_overlap_impl<int>(x);
   }
 
-  return R_NilValue;
+  return filter_overlap_impl<double>(x);
 }

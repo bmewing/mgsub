@@ -332,6 +332,68 @@ test_that("filter_overlap preserves overlap precedence and matrix shape", {
   expect_equal(dim(one), c(1, 4))
 })
 
+test_that("native filter_overlap handles integer, numeric, and empty matrices", {
+  x_int = matrix(c(1L, 1L, 4L, 4L,
+                   2L, 1L, 3L, 3L,
+                   3L, 6L, 2L, 7L),
+                 byrow = TRUE, ncol = 4)
+  expect_equal(
+    .Call("_mgsub_filter_overlap_cpp", x_int, PACKAGE = "mgsub"),
+    matrix(c(1L, 1L, 4L, 4L,
+             3L, 6L, 2L, 7L),
+           byrow = TRUE, ncol = 4)
+  )
+
+  x_num = matrix(c(1, 1, 4, 4,
+                   2, 1, 3, 3,
+                   3, 6, 2, 7),
+                 byrow = TRUE, ncol = 4)
+  expect_equal(
+    .Call("_mgsub_filter_overlap_cpp", x_num, PACKAGE = "mgsub"),
+    matrix(c(1, 1, 4, 4,
+             3, 6, 2, 7),
+           byrow = TRUE, ncol = 4)
+  )
+
+  empty = matrix(integer(0), ncol = 4)
+  result = .Call("_mgsub_filter_overlap_cpp", empty, PACKAGE = "mgsub")
+  expect_equal(dim(result), c(0, 4))
+  expect_type(result, "integer")
+})
+
+test_that("native filter_overlap validates matrix input", {
+  expect_error(
+    .Call("_mgsub_filter_overlap_cpp", c(1L, 1L, 4L, 4L), PACKAGE = "mgsub"),
+    "x must be a matrix with 4 columns"
+  )
+
+  expect_error(
+    .Call("_mgsub_filter_overlap_cpp", matrix(1L, ncol = 3), PACKAGE = "mgsub"),
+    "x must be a matrix with 4 columns"
+  )
+
+  expect_error(
+    .Call("_mgsub_filter_overlap_cpp",
+          matrix(TRUE, nrow = 1, ncol = 4), PACKAGE = "mgsub"),
+    "x must be an integer or numeric matrix"
+  )
+})
+
+test_that("native filter_overlap skips previously discarded rows correctly", {
+  x = matrix(c(1L, 1L, 5L, 5L,
+               2L, 1L, 4L, 4L,
+               3L, 1L, 3L, 3L,
+               4L, 8L, 2L, 9L),
+             byrow = TRUE, ncol = 4)
+
+  expect_equal(
+    .Call("_mgsub_filter_overlap_cpp", x, PACKAGE = "mgsub"),
+    matrix(c(1L, 1L, 5L, 5L,
+             4L, 8L, 2L, 9L),
+           byrow = TRUE, ncol = 4)
+  )
+})
+
 test_that("filter_overlap_base preserves overlap precedence and matrix shape", {
   x = matrix(c(1, 1, 4, 4,
                2, 1, 3, 3,
@@ -343,6 +405,17 @@ test_that("filter_overlap_base preserves overlap precedence and matrix shape", {
                       byrow = TRUE, ncol = 4))
 })
 
+test_that("filter_overlap_base drops rows when only the end position overlaps", {
+  x = matrix(c(1, 3, 3, 5,
+               2, 1, 4, 4),
+             byrow = TRUE, ncol = 4)
+
+  expect_equal(
+    filter_overlap_base(x),
+    matrix(c(1, 3, 3, 5), ncol = 4)
+  )
+})
+
 test_that("resolve_matches preserves ordering and overlap resolution", {
   x = matrix(c(1, 1, 4, 4,
                2, 1, 3, 3,
@@ -352,6 +425,56 @@ test_that("resolve_matches preserves ordering and overlap resolution", {
                matrix(c(1, 1, 4, 4,
                         3, 6, 2, 7),
                       byrow = TRUE, ncol = 4))
+})
+
+test_that("native resolve_matches handles integer, numeric, and short matrices", {
+  x_int = matrix(c(1L, 1L, 4L, 4L,
+                   2L, 1L, 3L, 3L,
+                   3L, 6L, 2L, 7L),
+                 byrow = TRUE, ncol = 4)
+  expect_equal(
+    .Call("_mgsub_resolve_matches_cpp", x_int, PACKAGE = "mgsub"),
+    matrix(c(1L, 1L, 4L, 4L,
+             3L, 6L, 2L, 7L),
+           byrow = TRUE, ncol = 4)
+  )
+
+  x_num = matrix(c(1, 1, 4, 4,
+                   2, 1, 3, 3,
+                   3, 6, 2, 7),
+                 byrow = TRUE, ncol = 4)
+  expect_equal(
+    .Call("_mgsub_resolve_matches_cpp", x_num, PACKAGE = "mgsub"),
+    matrix(c(1, 1, 4, 4,
+             3, 6, 2, 7),
+           byrow = TRUE, ncol = 4)
+  )
+
+  one = matrix(c(1L, 2L, 3L, 4L), ncol = 4)
+  expect_equal(.Call("_mgsub_resolve_matches_cpp", one, PACKAGE = "mgsub"), one)
+
+  empty = matrix(integer(0), ncol = 4)
+  result = .Call("_mgsub_resolve_matches_cpp", empty, PACKAGE = "mgsub")
+  expect_equal(dim(result), c(0, 4))
+  expect_type(result, "integer")
+})
+
+test_that("native resolve_matches validates matrix input", {
+  expect_error(
+    .Call("_mgsub_resolve_matches_cpp", c(1L, 1L, 4L, 4L), PACKAGE = "mgsub"),
+    "x must be a matrix with 4 columns"
+  )
+
+  expect_error(
+    .Call("_mgsub_resolve_matches_cpp", matrix(1L, ncol = 3), PACKAGE = "mgsub"),
+    "x must be a matrix with 4 columns"
+  )
+
+  expect_error(
+    .Call("_mgsub_resolve_matches_cpp",
+          matrix(TRUE, nrow = 1, ncol = 4), PACKAGE = "mgsub"),
+    "x must be an integer or numeric matrix"
+  )
 })
 
 test_that("resolve_matches_base preserves ordering and overlap resolution", {
