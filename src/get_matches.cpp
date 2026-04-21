@@ -120,3 +120,66 @@ extern "C" SEXP _mgsub_get_matches_cpp(SEXP string, SEXP pattern, SEXP i,
   UNPROTECT(6);
   return out;
 }
+
+extern "C" SEXP _mgsub_collect_matches_cpp(SEXP string, SEXP pattern,
+                                           SEXP dots) {
+  if (TYPEOF(pattern) != STRSXP) {
+    Rf_error("pattern must be a character vector");
+  }
+
+  const R_xlen_t n_patterns = XLENGTH(pattern);
+  std::vector<int> out_data;
+  out_data.reserve(static_cast<size_t>(n_patterns) * 4);
+
+  for (R_xlen_t idx = 0; idx < n_patterns; ++idx) {
+    SEXP pattern_i = PROTECT(Rf_ScalarString(STRING_ELT(pattern, idx)));
+    SEXP call = PROTECT(build_gregexpr_call(pattern_i, string, dots));
+    SEXP tmp = PROTECT(Rf_eval(call, R_BaseEnv));
+
+    if (!Rf_isNewList(tmp) || Rf_length(tmp) < 1) {
+      UNPROTECT(3);
+      Rf_error("gregexpr did not return a list");
+    }
+
+    SEXP start = PROTECT(Rf_coerceVector(VECTOR_ELT(tmp, 0), INTSXP));
+    SEXP length = Rf_getAttrib(VECTOR_ELT(tmp, 0), match_length_symbol());
+    if (length == R_NilValue) {
+      UNPROTECT(4);
+      Rf_error("gregexpr result did not include match.length");
+    }
+    length = PROTECT(Rf_coerceVector(length, INTSXP));
+
+    const R_xlen_t n = XLENGTH(start);
+    const int* start_data = INTEGER(start);
+    const int* length_data = INTEGER(length);
+
+    for (R_xlen_t row = 0; row < n; ++row) {
+      const int start_i = start_data[row];
+      if (start_i == -1) {
+        continue;
+      }
+
+      const int length_i = length_data[row];
+      out_data.push_back(static_cast<int>(idx + 1));
+      out_data.push_back(start_i);
+      out_data.push_back(length_i);
+      out_data.push_back(start_i + length_i - 1);
+    }
+
+    UNPROTECT(5);
+  }
+
+  const int nrows = static_cast<int>(out_data.size() / 4);
+  SEXP out = PROTECT(Rf_allocMatrix(INTSXP, nrows, 4));
+  int* out_ptr = INTEGER(out);
+
+  for (int row = 0; row < nrows; ++row) {
+    out_ptr[row] = out_data[static_cast<size_t>(row) * 4];
+    out_ptr[row + nrows] = out_data[static_cast<size_t>(row) * 4 + 1];
+    out_ptr[row + (2 * nrows)] = out_data[static_cast<size_t>(row) * 4 + 2];
+    out_ptr[row + (3 * nrows)] = out_data[static_cast<size_t>(row) * 4 + 3];
+  }
+
+  UNPROTECT(1);
+  return out;
+}

@@ -4,10 +4,14 @@
 
 extern SEXP _mgsub_filter_overlap_cpp(SEXP);
 extern SEXP _mgsub_get_matches_cpp(SEXP, SEXP, SEXP, SEXP);
+extern SEXP _mgsub_collect_matches_cpp(SEXP, SEXP, SEXP);
+extern SEXP _mgsub_resolve_matches_cpp(SEXP);
 
 static const R_CallMethodDef CallEntries[] = {
   {"_mgsub_filter_overlap_cpp", (DL_FUNC) &_mgsub_filter_overlap_cpp, 1},
   {"_mgsub_get_matches_cpp", (DL_FUNC) &_mgsub_get_matches_cpp, 4},
+  {"_mgsub_collect_matches_cpp", (DL_FUNC) &_mgsub_collect_matches_cpp, 3},
+  {"_mgsub_resolve_matches_cpp", (DL_FUNC) &_mgsub_resolve_matches_cpp, 1},
   {NULL, NULL, 0}
 };
 

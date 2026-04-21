@@ -52,17 +52,10 @@ censor_worker = function(string, pattern, censor, split=any(nchar(censor) > 1), 
   #' @param seed optional parameter to fix sampling of multicharacter censors
   #' @param \dots arguments to pass to regexpr family
 
-  x0 = do.call(rbind, lapply(seq_along(pattern),
-                             get_matches,
-                             string = string,
-                             pattern = pattern,
-                             ...))
-  x0 = matrix(x0[x0[, 2] != -1, ], ncol = 4)
+  x0 = collect_matches(string = string, pattern = pattern, ...)
   if (nrow(x0) == 0) return(string)
   if (nrow(x0) > 1) {
-    x = x0[order(x0[, 3], decreasing = T), ]
-    x = filter_overlap(x) #nolint
-    x = x[order(x[, 2]), , drop = FALSE]
+    x = resolve_matches(x0)
   } else {
     x = x0
   }
