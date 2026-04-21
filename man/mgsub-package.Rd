@@ -10,6 +10,7 @@ Designed to enable simultaneous substitution in strings in a safe fashion. Safe 
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://github.com/bmewing/mgsub}
   \item Report bugs at \url{https://github.com/bmewing/mgsub/issues}
 }
 

@@ -1,7 +1,7 @@
 Package: mgsub
 Type: Package
 Title: Safe, Multiple, Simultaneous String Substitution
-Version: 1.9.9
+Version: 2.0.0
 Authors@R: c(
   person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre"))
   )
