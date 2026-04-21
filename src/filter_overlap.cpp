@@ -65,10 +65,6 @@ SEXP filter_overlap_impl(SEXP x) {
 
     bool overlaps = false;
     for (int j = 0; j < i; ++j) {
-      if (!keep[j]) {
-        continue;
-      }
-
       const T ps = data[j + nrows];
       const T pe = data[j + (3 * nrows)];
       if ((ps <= s && pe >= s) || (ps <= e && pe >= e)) {
