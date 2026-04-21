@@ -37,7 +37,7 @@ Recycling is to make it easy to provide a single replacement (or a pattern of re
 mgsub::mgsub("hey, ho, let's go!",c("hey","ho","go"),"ugh",recycle=TRUE)
 ```
 
-Matches and replacements can still be supplied as regex exressions. Additional arguments can be passed to the `sub`/`gsub`/`gregexpr` family of internal functions.
+Matches and replacements can still be supplied as regex expressions. Additional arguments can be passed to the `sub`/`gsub`/`gregexpr` family of internal functions.
 
 ```r
 mgsub::mgsub("Dopazamine is not the same as Dopachloride and is still fake.", 
