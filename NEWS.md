@@ -2,6 +2,7 @@
 * Rewrote key functions in C to provide significant performance boost (4-5x speedup in certain tests)
 * `get_matches` and `filter_overlap` are the primary performance enhancers
 * `get_matches_base` and `filter_overlap_base` retain the original base R functionality in case of issues with building the code
+* Changed maintainer email address because current one was bouncing CRAN emails
 
 # mgsub 1.7.3
 * Vignettes were using the qdap package which was not available causing errors. This update only modifies the vignette to remove the use of qdap (and microbenchmark) and so these were removed from the 'suggests'.

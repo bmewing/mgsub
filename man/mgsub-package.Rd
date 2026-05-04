@@ -11,12 +11,18 @@ Designed to enable simultaneous substitution in strings in a safe fashion. Safe 
 Useful links:
 \itemize{
   \item \url{https://github.com/bmewing/mgsub}
+  \item \url{https://bmewing.github.io/mgsub/}
   \item Report bugs at \url{https://github.com/bmewing/mgsub/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Mark Ewing \email{b.mark@ewingsonline.com}
+\strong{Maintainer}: Mark Ewing \email{b.mark.ewing@gmail.com}
+
+Authors:
+\itemize{
+  \item Mark Ewing \email{b.mark.ewing@gmail.com}
+}
 
 }
 \keyword{internal}
