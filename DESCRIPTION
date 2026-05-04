@@ -3,7 +3,7 @@ Type: Package
 Title: Safe, Multiple, Simultaneous String Substitution
 Version: 2.0.0
 Authors@R: c(
-  person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre"))
+  person("Mark", "Ewing", email="b.mark.ewing@gmail.com", role=c("aut","cre"))
   )
 BugReports: https://github.com/bmewing/mgsub/issues
 Description: Designed to enable simultaneous substitution in strings in a safe fashion.
