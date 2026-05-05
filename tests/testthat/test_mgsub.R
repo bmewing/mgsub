@@ -36,6 +36,16 @@ test_that("NAs are correctly handled", {
   expect_equal(mgsub(c("string", NA, "test"), c("t"), c("p")), c("spring", NA, "pesp"))
 })
 
+test_that("numeric input is handled gracefully", {
+  expect_equal(mgsub("I live in the 37664 zip code but I'm moving to 99516", 
+                     pattern = 37664, replacement=37660),
+               "I live in the 37660 zip code but I'm moving to 99516")
+  expect_equal(mgsub("I live in the 37664 zip code but I'm moving to 99516", 
+                     pattern = c(37664, "99516"), replacement=c("37660", 58126)),
+               "I live in the 37660 zip code but I'm moving to 58126")
+  expect_equal(mgsub(123414, 4, "a"), "123a1a")
+})
+
 test_that("recylce has to be a boolean", {
   expect_error(mgsub("hey, ho", c("hey"), c("ho", "hey"), recycle = "yes"))
   expect_error(mgsub("hey, ho", c("hey"), c("ho", "hey"), recycle = 1))

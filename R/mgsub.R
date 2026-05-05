@@ -26,6 +26,7 @@ mgsub = function(string, pattern, replacement, recycle=FALSE, ...) {
 
   if (all(is.na(string))) return(string)
   sna = !is.na(string)
+  sn = is.numeric(string)
   if (!is.logical(recycle)) stop("Recycle must be a boolean")
   if (!recycle & length(pattern) != length(replacement)) {
     stop("pattern and replacement vectors must be the same length")
@@ -40,6 +41,7 @@ mgsub = function(string, pattern, replacement, recycle=FALSE, ...) {
     lr = length(replacement)
     replacement = rep(replacement, ceiling(lp / lr))[seq_along(pattern)]
   }
+  
   result = vapply(X = string[sna],
                   FUN = worker,
                   FUN.VALUE = c(""),

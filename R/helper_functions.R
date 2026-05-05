@@ -55,6 +55,10 @@ collect_matches = function(string, pattern, ...) {
   if (length(pattern) == 0) {
     return(collect_matches_base(string, pattern, ...))
   }
+  
+  if (any(is.numeric(pattern))) {
+    pattern[is.numeric(pattern)] = as.character(pattern[is.numeric(pattern)])
+  }
 
   if (has_collect_matches_native()) {
     return(.Call("_mgsub_collect_matches_cpp", string, pattern, list(...),
