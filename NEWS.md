@@ -18,7 +18,7 @@
 # mgsub 1.7
 
 * Added the mgsub_censor function which enables fast, simultaneous censoring of patterns
-* Trimmed unncessary logic and helper functions
+* Trimmed unnecessary logic and helper functions
 
 # mgsub 1.6
 
