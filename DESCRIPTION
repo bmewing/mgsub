@@ -3,7 +3,7 @@ Type: Package
 Title: Safe, Multiple, Simultaneous String Substitution
 Version: 2.0.0
 Authors@R: c(
-  person("Mark", "Ewing", email="b.mark@ewingsonline.com", role=c("aut","cre"))
+  person("Mark", "Ewing", email="b.mark.ewing@gmail.com", role=c("aut","cre"))
   )
 BugReports: https://github.com/bmewing/mgsub/issues
 Description: Designed to enable simultaneous substitution in strings in a safe fashion.
@@ -11,9 +11,9 @@ Description: Designed to enable simultaneous substitution in strings in a safe f
 License: MIT + file LICENSE
 Encoding: UTF-8
 ByteCompile: true
-RoxygenNote: 7.3.3
 Suggests: testthat,
     knitr,
     rmarkdown
 VignetteBuilder: knitr
 URL: https://github.com/bmewing/mgsub, https://bmewing.github.io/mgsub/
+Config/roxygen2/version: 8.0.0
