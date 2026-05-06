@@ -10,8 +10,14 @@ Useful links:
 
 - <https://github.com/bmewing/mgsub>
 
+- <https://bmewing.github.io/mgsub/>
+
 - Report bugs at <https://github.com/bmewing/mgsub/issues>
 
 ## Author
 
-**Maintainer**: Mark Ewing <b.mark@ewingsonline.com>
+**Maintainer**: Mark Ewing <b.mark.ewing@gmail.com>
+
+Authors:
+
+- Mark Ewing <b.mark.ewing@gmail.com>

@@ -2,12 +2,16 @@
 
 ## mgsub 2.0.0
 
+CRAN release: 2026-05-06
+
 - Rewrote key functions in C to provide significant performance boost
   (4-5x speedup in certain tests)
 - `get_matches` and `filter_overlap` are the primary performance
   enhancers
 - `get_matches_base` and `filter_overlap_base` retain the original base
   R functionality in case of issues with building the code
+- Changed maintainer email address because current one was bouncing CRAN
+  emails
 
 ## mgsub 1.7.3
 
@@ -43,7 +47,7 @@ CRAN release: 2019-03-13
 
 - Added the mgsub_censor function which enables fast, simultaneous
   censoring of patterns
-- Trimmed unncessary logic and helper functions
+- Trimmed unnecessary logic and helper functions
 
 ## mgsub 1.6
 

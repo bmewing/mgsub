@@ -9,6 +9,7 @@ transforming a line from the Ramones into Santa Claus leaving on
 Christmas Eve.
 
 ``` r
+
 s = "hey ho, let's go!"
 gsub("hey", "ho", s)
 ```
@@ -24,6 +25,7 @@ construct a regular expression which matches on “hey” or “ho” and
 replaces any such matches with “yo”.
 
 ``` r
+
 s = "hey ho, let's go!"
 gsub("hey|ho", "yo", s)
 ```
@@ -34,6 +36,7 @@ If you wanted to replace “hey” with “get” and “ho” with “ready” 
 would need two steps.
 
 ``` r
+
 s = "hey ho, let's go!"
 s_new = gsub("hey", "get", s)
 s_new = gsub("ho", "ready", s_new)
@@ -48,6 +51,7 @@ down. Because each change happens in order, “hey” becomes “ho” and then
 every “ho” becomes “hey”, undoing the first step.
 
 ``` r
+
 s = "hey ho, let's go!"
 s_new = gsub("hey", "ho", s)
 s_new = gsub("ho", "hey", s_new)
@@ -64,6 +68,7 @@ match as well as replacements and the replacements are applied
 simultaneously.
 
 ``` r
+
 library(mgsub)
 s = "hey ho, let's go!"
 mgsub::mgsub(string = s, pattern = c("hey", "ho"), replacement = c("ho", "hey"))
@@ -80,6 +85,7 @@ ignores “dopachloride” for replacement but matches both “Dopazamine” and
 claims!).
 
 ``` r
+
 s = "Dopazamine is not the same as dopachloride or dopastriamine, yet is still fake."
 pattern = c("[Dd]opa([^ ]*?mine)", "fake")
 replacement = c("Meta\\1", "real")
@@ -92,6 +98,7 @@ Furthermore, you can pass through any options from the `gsub` family. In
 the example below you can see fixed string matching
 
 ``` r
+
 s = "All my life I chased $money$ and .power. - not love!"
 pattern = c("$money$", ".power.", "love")
 replacement = c("balloons", "dolphins", "success")

@@ -27,6 +27,7 @@ bloat when being used.
 ## Install it!
 
 ``` r
+
 install.packages('mgsub')
 #Install the latest version from GitHub
 #devtools::install_github("bmewing/mgsub")
@@ -39,6 +40,7 @@ to match and a vector of replacements. Then watch as they are safely,
 simultaneously replaced!
 
 ``` r
+
 mgsub::mgsub(string,pattern=c(),replacement=c(),recycle=FALSE,...)
 ```
 
@@ -46,6 +48,7 @@ The pattern to match is supplied first and the replacement vector
 follows.
 
 ``` r
+
 mgsub::mgsub("hey, how are you?",c("hey","how","are","you"),c("how","are","you","hey"))
 ```
 
@@ -53,6 +56,7 @@ Recycling is to make it easy to provide a single replacement (or a
 pattern of replacements) for multiple matches.
 
 ``` r
+
 mgsub::mgsub("hey, ho, let's go!",c("hey","ho","go"),"ugh",recycle=TRUE)
 ```
 
@@ -61,6 +65,7 @@ Additional arguments can be passed to the `sub`/`gsub`/`gregexpr` family
 of internal functions.
 
 ``` r
+
 mgsub::mgsub("Dopazamine is not the same as Dopachloride and is still fake.", 
              c("[Dd]opa(.*?mine)","fake"), c("Meta\\1","real"),ignore.case=F)
 ```

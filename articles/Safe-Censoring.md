@@ -12,6 +12,7 @@ Given a goal of preserving length, this could be accomplished when
 working with fixed search strings using mgsub.
 
 ``` r
+
 library(mgsub)
 string = "Time to flip this family into a fun pit of pudding!"
 pattern = c("flip", "family", "fun")
@@ -29,6 +30,7 @@ is based on the length of the regular expression, not the match itself.
 So this fails to maintain character length.
 
 ``` r
+
 string = "Time to flip this family into a fun pit of pudding!"
 pattern = c("f[^ ]*i[^ ]*", "fun")
 replacement = vapply(pattern, function(x) {
@@ -51,6 +53,7 @@ patterns to match as well as your desired censoring character and the
 censoring is applied simultaneously.
 
 ``` r
+
 string = "Time to flip this family into a fun pit of pudding!"
 pattern = c("f[^ ]*i[^ ]*", "fun")
 mgsub::mgsub_censor(string = string, pattern = pattern, censor = "*")
@@ -71,6 +74,7 @@ value will be split into individual characters and these will be sampled
 to produce the effect.
 
 ``` r
+
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = "?#!*"
@@ -80,6 +84,7 @@ print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
     ## [1] "Why don't you go ?!*! a cookie?"
 
 ``` r
+
 print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
 ```
 
@@ -88,6 +93,7 @@ print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
 The randomness can be limited by setting a seed.
 
 ``` r
+
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = "?#!*"
@@ -102,6 +108,7 @@ will be replicated 4 times because of the match length and so the output
 is 12 characters longer than the input. Use this with caution.
 
 ``` r
+
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = "?#!*"
@@ -117,6 +124,7 @@ and split = TRUE. Note how setting split = FALSE doesn’t impact output
 character count.
 
 ``` r
+
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = c("?", "#", "!", "*")
@@ -126,12 +134,14 @@ print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
     ## [1] "Why don't you go !*?# a cookie?"
 
 ``` r
+
 print(mgsub::mgsub_censor(string, pattern, censor, split = FALSE))
 ```
 
     ## [1] "Why don't you go ?!*# a cookie?"
 
 ``` r
+
 print(mgsub::mgsub_censor(string, pattern, censor, seed = 1002))
 ```
 
@@ -144,6 +154,7 @@ greater than one doesn’t matter. Each vector element is split, then the
 set is `unlist`ed.
 
 ``` r
+
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = c("?#", "!*")
@@ -153,12 +164,14 @@ print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
     ## [1] "Why don't you go !*?# a cookie?"
 
 ``` r
+
 print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE))
 ```
 
     ## [1] "Why don't you go ?!*# a cookie?"
 
 ``` r
+
 print(mgsub::mgsub_censor(string, pattern, censor, split = TRUE, seed = 1002))
 ```
 
@@ -171,6 +184,7 @@ we sample between two 2-character elements four times so we end up with
 caution.
 
 ``` r
+
 string = "Why don't you go flip a cookie?"
 pattern = "flip"
 censor = c("?#", "!*")
@@ -193,6 +207,7 @@ shorter kilo is ignored when matching kilogram despite being a
 substring.
 
 ``` r
+
 string = "I'm selling 100 kilograms of bleach for $20/kilo"
 pattern = c("kilo", "kilogram")
 censor = "*"

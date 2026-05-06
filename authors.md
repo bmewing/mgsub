@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/bmewing/mgsub/blob/v2.0/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/bmewing/mgsub/blob/master/DESCRIPTION)
 
 Ewing M (2026). *mgsub: Safe, Multiple, Simultaneous String
 Substitution*. R package version 2.0.0,
